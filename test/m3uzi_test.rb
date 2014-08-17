@@ -1,10 +1,14 @@
-$: << File.join(File.dirname(__FILE__),'../lib')
-require 'm3uzi'
-require 'test/unit'
-require 'rubygems'
-require 'shoulda'
 
-class M3UziTest < Test::Unit::TestCase
+$: << File.join(File.dirname(__FILE__),'../lib')
+
+require 'm3uzi'
+require 'rubygems'
+require 'minitest'
+require 'minitest/autorun'
+require 'shoulda'
+require 'stringio'
+
+class M3UziTest < MiniTest::Test
 
   context "basic checks" do
     should "instantiate an M3Uzi object" do
@@ -12,10 +16,10 @@ class M3UziTest < Test::Unit::TestCase
       assert_equal M3Uzi, m3u.class
     end
 
-    # should "read in an index file" do
-    #   m3u = M3Uzi.read(File.join(File.dirname(__FILE__), "fixtures/index.m3u8"))
-    #   assert_equal M3Uzi, m3u.class
-    # end
+     should "read in an index file" do
+       m3u = M3Uzi.read(File.join(File.dirname(__FILE__), "fixtures/index.m3u8"))
+       assert_equal M3Uzi, m3u.class
+     end
   end
 
   context "with protocol versions" do
@@ -40,6 +44,7 @@ class M3UziTest < Test::Unit::TestCase
       assert_equal 1, m3u.check_version_restrictions
 
       output_stream = StringIO.new
+
       m3u.write_to_io(output_stream)
       assert output_stream.string =~ /:10,/
       assert output_stream.string !~ /:10\./
@@ -74,5 +79,4 @@ class M3UziTest < Test::Unit::TestCase
       assert_equal 4, m3u.check_version_restrictions
     end
   end
-
 end

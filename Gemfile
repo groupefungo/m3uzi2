@@ -1,4 +1,7 @@
 source 'http://rubygems.org'
 
-gem 'minitest'
-gem 'shoulda'
+group :test do
+  gem 'minitest'
+  gem 'shoulda'
+end
+

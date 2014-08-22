@@ -2,26 +2,26 @@
 module M3Uzi2
   # Base methods for Playlist & Header specification classes.
   class ListSpecification
-    @@tags = []
-
-    #class << self; attr_accessor :tag_list; end
+    class << self
+      attr_accessor :tag_list
+    end
 
     def initialize
-      @tags = Hash[@@tags.product([nil])]
+      @tags = Hash[self.class.tag_list.product([nil])]
       define_tags
     end
 
     def [](key)
-      return @tags[key]
+      @tags[key]
     end
 
-    def valid_tag?(tag)
-      @@tags.include?(tag)
+    def valid_tag?(tag_name)
+      self.class.tag_list.include?(tag_name)
     end
 
     def valid_attribute?(tag, attribute)
       valid_tag?(tag.name) &&
-        @tags[tag.name].valid_attribute?(tag, attribute)
+        @tags[tag.name].valid_attribute?(attribute)
     end
 
     def check_tag(tag)

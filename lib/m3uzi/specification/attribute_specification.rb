@@ -13,8 +13,8 @@ module M3Uzi2
       @constaints.add(&block) if block_given?
     end
 
-    def add_constraint(&block)
-      @constaints.add(&block)
+    def add_constraint(err_msg, &block)
+      @constaints.add(err_msg, &block)
     end
 
     def valid?(attribute)

@@ -21,13 +21,18 @@ class M3U8File
 
   def_delegators :@headers,  :add_tag
   def_delegators :@playlist, :add
-
+  def_delegators :@playlist, :is_vod?,
+                             :is_event?,
+                             :is_live?
   def initialize
     @headers = M3U8Headers.new
     @playlist = M3U8Playlist.new
     @version_info = M3U8VersionInfo.new
 
     @final_media_file = false
+
+    # It looks like this should be set on reading in the file but isn't
+    # ...
     @initial_media_sequence = 0
   end
 

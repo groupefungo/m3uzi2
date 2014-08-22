@@ -1,8 +1,7 @@
 
 # Parse a line from and m3u8 file and determine
 class M3U8TagParser
-
-  def self.parse(line, path, m3u8_file)
+    def self.parse(line, path, m3u8_file)
     case type(line)
     when :tag
       m3u8_file.add_tag(*parse_general_tag(line))
@@ -34,7 +33,7 @@ class M3U8TagParser
     else
       :file
     end
-  end
+      end
 
   def self.parse_general_tag(line)
     line

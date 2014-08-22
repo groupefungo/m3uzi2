@@ -10,18 +10,18 @@ class M3U8VersionInfo
   attr_reader :version
 
   # Allow forcing of a version to a specific number
-  def initialize(ver = 1, force = false)
+  def initialize(ver = 1)
     @version = ver
-    @force = force
   end
 
   # Attempt to determine the version from the contents of the M3U8 File
-  def resolve_version(playlist, headers)
-    return @version if @force
-
+  def check_version(playlist, headers)
     @version = 2 if version2?(playlist)
     @version = 3 if version3?(playlist)
     @version = 4 if version4?(playlist, headers)
+    @version = 5 if version5?(playlist, headers)
+    @version = 6 if version6?(playlist, headers)
+    @version = 7 if version7?(playlist, headers)
 
     # NOTES
     #   EXT-X-I-FRAME-STREAM-INF is supposed to be ignored by older clients.

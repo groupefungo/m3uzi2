@@ -1,0 +1,15 @@
+require_relative 'ext_x_key'
+require_relative 'extinf'
+
+#define_ext_x_key
+#define_extinf
+#define_ext_x_byterange
+#define_ext_x_program_date_time
+#define_ext_x_media
+#define_ext_x_stream_inf
+#define_ext_x_discontinuity
+#define_ext_x_discontinuity_sequence
+#define_ext_x_i_frames_only
+#define_ext_x_map
+#define_ext_x_i_frame_stream_inf
+#define_ext_x_independent_segments

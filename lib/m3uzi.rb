@@ -7,6 +7,11 @@ require 'm3uzi/m3u8_reader'
 require 'm3uzi/m3u8_writer'
 require 'm3uzi/m3u8_file'
 
+# A client to support parsing of M3U and M3U8 files, based on zencoder/m3uzi,
+# with extensive refactorization.
+#
+# Updated to support the latest draft RFC specification:
+#   http://tools.ietf.org/html/draft-pantos-http-live-streaming-13
 class M3Uzi2
   extend Forwardable
 
@@ -14,9 +19,8 @@ class M3Uzi2
 #  def_delegators :@m3u8_writer, :write
 
   def_delegators :@m3u8_file, :headers,
-                              :playlist
-
-
+                              :playlist,
+                              :is_valid?
   def initialize(pathname)
     @m3u8_file   = M3U8File.new
     @m3u8_reader = M3U8Reader.new(pathname, @m3u8_file)
@@ -28,28 +32,28 @@ class M3Uzi2
   end
 
   def save
-
+    @m3u8_writted.write
   end
+end
 
-  protected
 
-  def self.format_iv(num)
-    '0x' + num.to_s(16).rjust(32,'0')
+def test_m3u8(file)
+  puts "Testing #{file}"
+  m3uzi2 = M3Uzi2.new(file)
+  m3uzi2.load
+  m3uzi2.playlist.items.each do | f |
+    puts "Invalid Tag #{f.inspect}" unless f.valid?
   end
-
-  def format_iv(num)
-    self.class.format_iv(num)
-  end
+  #return m3uzi.is_valid?
+rescue Exception => e
+  puts "#{file} FAILED .."
+  puts e.message
+  return false
 end
 
 if $PROGRAM_NAME == __FILE__
-  #m3uzi2 = M3Uzi2.new('../spec/samples/2014-08-18-122730.M3U8')
-  #m3uzi2 = M3Uzi2.new('../spec/samples/index.m3u8')
-  m3uzi2 = M3Uzi2.new('../spec/samples/stream.m3u8')
-  m3uzi2.load
-  m3uzi2.playlist.items.each do | f |
-    puts f.inspect
+  #test_m3u8('../spec/samples/dosnotexist.m3u')
+  Dir['../spec/samples/*'].each do | file |
+    test_m3u8(file)
+  end
 end
-end
-
-

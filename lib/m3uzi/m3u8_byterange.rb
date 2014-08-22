@@ -1,9 +1,9 @@
 class M3U8ByteRange
   def initialize
-    @prev_byterange_endpoint = nil
+    reset
   end
 
-  def reset_byterange_history
+  def reset
     @prev_byterange_endpoint = nil
   end
 

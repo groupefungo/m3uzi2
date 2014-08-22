@@ -1,7 +1,7 @@
 class M3Uzi
   class Item
     def valid?
-      true
+      false
     end
   end
 end

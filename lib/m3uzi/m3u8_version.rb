@@ -1,10 +1,6 @@
 
+require_relative 'types/all'
 
-require 'm3uzi/types/item'
-require 'm3uzi/types/tag'
-require 'm3uzi/types/file'
-require 'm3uzi/types/stream'
-require 'm3uzi/types/comment'
 # Determine the version of an m3u or m3u8 file
 class M3U8VersionInfo
   attr_reader :version

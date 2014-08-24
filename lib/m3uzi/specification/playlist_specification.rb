@@ -1,6 +1,6 @@
 require_relative 'list_specification'
 require_relative 'tag_specification'
-require_relative 'definitions/playlist'
+#require_relative 'definitions/playlist'
 
 module M3Uzi2
   # ==== Description
@@ -13,19 +13,8 @@ module M3Uzi2
         %w( EXTINF EXT-X-BYTERANGE EXT-X-KEY EXT-X-PROGRAM-DATE-TIME
             EXT-X-ENDLIST EXT-X-MEDIA EXT-X-STREAM-INF EXT-X-DISCONTINUITY
             EXT-X-DISCONTINUITY-SEQUENCE EXT-X-I-FRAMES-ONLY EXT-X-MAP
-            EXT-X-I-FRAME-STREAM-INF EXT-X-INDEPENDENT-SEGMENTS )
+            EXT-X-I-FRAME-STREAM-INF EXT-X-INDEPENDENT-SEGMENTS EXT-X-ENDLIST )
       super
-    end
-
-    private
-
-    # ==== Description
-    # Define the tags for the playlist. Called from the base class
-    # ListSpecification's initializer.
-    def define_tags
-      # TODO - just loop through the tag list requiring and creating
-      EXT_X_KEY.new(@tags)
-      EXTINF.new(@tags)
     end
   end
 end

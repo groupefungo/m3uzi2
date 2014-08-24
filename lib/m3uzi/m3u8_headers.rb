@@ -1,32 +1,29 @@
-class M3U8Headers
-  def initialize
-    @_headers = {}
-  end
+require 'forwardable'
+require_relative 'm3u8_tag_list'
+require_relative 'specification/header_specification'
 
-  def add_tag(name = nil, value = nil)
-    @_headers[name] = M3Uzi::Tag.new(name, value)
-  end
+module M3Uzi2
+  class M3U8Headers < M3U8TagList
+    extend Forwardable
 
-  def tag(key)
-    tag_name = key.to_s.upcase.gsub("_", "-")
-    obj = tags.detect { |tag| tag.name == tag_name }
-    obj && obj.value
-  end
+    def initialize(spec_version = 7)
+      @_spec = M3Uzi2::HeaderSpecification.new
+      super()
+    end
 
-  def tags
-    @_headers
-  end
+    def add(tag)
+      tag.valid?
+      case tag
+      when M3Uzi2::Tag
+        @_lines << tag
+      else
+        fail "Only M3Uzi2::Tags may be added to headers"
+      end
+    end
 
-  # def [](key)
-  #   tag_name = key.to_s.upcase.gsub("_", "-")
-  #   obj = tags.detect { |tag| tag.name == tag_name }
-  #   obj && obj.value
-  # end
-  #
-  # def []=(key, value)
-  #   add_tag do |tag|
-  #     tag.name = key
-  #     tag.value = value
-  #   end
-  # end
+    def valid_header?(tag)
+      @_spec.valid_tag?(tag)
+    end
+
+  end
 end

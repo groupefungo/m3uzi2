@@ -2,27 +2,32 @@ module M3Uzi2
 
   class ConstraintError
     attr_reader :message,
-                :line,
+                :location,
                 :code
 
-    def initialize(message)
+    def initialize(message, &block)
       @message = message
+      @location = block.source_location if block_given?
     end
 
     def to_s
-      @message
+      message = "#{@message} "
+#      message << "(value='#{val}')" if val
+      message << "\n#{@location[0]}:#{@location[1]}"
     end
   end
 
   # TODO: Seperate AttributeConstraints and TagConstraints?
   class Constraint
+    attr_reader :error
+
     def initialize(err_msg, &block)
-      @error = ConstraintError.new(err_msg)
       @block = block
+      @error = ConstraintError.new(err_msg, &block)
     end
 
     def test(tag_or_attibute)
-      @block.call(tag_or_attibute)
+      @block.call(tag_or_attibute) ? true : false
     end
   end
 
@@ -35,17 +40,28 @@ module M3Uzi2
       @constraints = []
     end
 
-    def add(err_msg, &block)
-      @constraints << block
+    def <<(constraint)
+      add(constraint)
+    end
+
+    def add(constraint)
+      case constraint
+      when Constraint
+        @constraints << constraint
+      else
+        fail "Attempted to add #{constraint.class} to constraints"
+      end
     end
 
     def valid?(attribute_or_tag)
       @constraints.each do | constraint |
-        unless constraint.call(attribute_or_tag)
-          puts "#{attribute_or_tag.name} Failed Against Constraint: #{constraint.inspect}"
+        unless constraint.test(attribute_or_tag)
+          puts "WARNING @ #{attribute_or_tag.name} Failed Against Constraint With Error: "\
+            "#{constraint.error}"
           return false
         end
       end
+
       true
     end
   end

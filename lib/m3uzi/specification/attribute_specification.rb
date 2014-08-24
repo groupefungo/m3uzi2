@@ -7,18 +7,30 @@ module M3Uzi2
     attr_reader :name,
                 :contraints
 
-    def initialize(name, &block)
+    def initialize(name)
       @name = name
-      @constaints = Constraints.new
-      @constaints.add(&block) if block_given?
+      @constraints = Constraints.new
     end
 
-    def add_constraint(err_msg, &block)
-      @constaints.add(err_msg, &block)
+    def create_constraint(err_msg, &block)
+      @constraints << Constraint.new(err_msg, &block)
+    end
+
+    def <<(klass)
+      add(klass)
+    end
+
+    def add(klass)
+      case klass
+      when Constraint
+        @constraints << klass
+      else
+        fail "Cannot add a #{klass.class} to a #{self.class}"
+      end
     end
 
     def valid?(attribute)
-      @constaints.valid?(attribute)
+      @constraints.valid?(attribute)
     end
   end
 end

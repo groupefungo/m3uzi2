@@ -12,38 +12,40 @@ require 'm3uzi/m3u8_file'
 #
 # Updated to support the latest draft RFC specification:
 #   http://tools.ietf.org/html/draft-pantos-http-live-streaming-13
-class M3Uzi2
-  extend Forwardable
+module M3Uzi2
+  class M3Uzi
+    extend Forwardable
 
-#  def_delegators :@m3u8_reader, :read
-#  def_delegators :@m3u8_writer, :write
+  #  def_delegators :@m3u8_reader, :read
+  #  def_delegators :@m3u8_writer, :write
 
-  def_delegators :@m3u8_file, :headers,
-                              :playlist,
-                              :is_valid?
-  def initialize(pathname)
-    @m3u8_file   = M3U8File.new
-    @m3u8_reader = M3U8Reader.new(pathname, @m3u8_file)
-    @m3u8_writer = M3U8Writer.new(pathname, @m3u8_file)
-  end
+    def_delegators :@m3u8_file, :headers,
+                                :playlist,
+                                :is_valid?
+    def initialize(pathname)
+      @m3u8_file   = M3U8File.new
+      @m3u8_reader = M3U8Reader.new(pathname, @m3u8_file)
+#      @m3u8_writer = M3U8Writer.new(pathname, @m3u8_file)
+    end
 
-  def load
-    @m3u8_reader.read
-  end
+    def load
+      @m3u8_reader.read
+    end
 
-  def save
-    @m3u8_writted.write
+    def save
+      @m3u8_writer.write
+    end
   end
 end
 
 
 def test_m3u8(file)
   puts "Testing #{file}"
-  m3uzi2 = M3Uzi2.new(file)
+  m3uzi2 = M3Uzi2::M3Uzi.new(file)
   m3uzi2.load
-  m3uzi2.playlist.items.each do | f |
-    puts "Invalid Tag #{f.inspect}" unless f.valid?
-  end
+  #m3uzi2.playlist.items.each do | f |
+    #puts "Invalid Tag #{f.inspect}" unless f.valid?
+  #end
   #return m3uzi.is_valid?
 rescue Exception => e
   puts "#{file} FAILED .."
@@ -52,7 +54,6 @@ rescue Exception => e
 end
 
 if $PROGRAM_NAME == __FILE__
-  #test_m3u8('../spec/samples/dosnotexist.m3u')
   Dir['../spec/samples/*'].each do | file |
     test_m3u8(file)
   end

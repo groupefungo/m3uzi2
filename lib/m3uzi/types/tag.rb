@@ -1,25 +1,27 @@
-#require 'enumerable'
+# require 'enumerable'
 module M3Uzi2
-
-  class Attributes
+  # Generic Collection Type
+  class HashCollection
     include Enumerable
     def initialize
-      @attributes = {}
+      @members = {}
     end
 
     def [](key)
-      return @attributes[key]
+      return @members[key]
     end
 
     def []=(key, val)
-      @attributes[key] =  val
+      @members[key] =  val
     end
-
 
     def each(&block)
-      @attributes.each(&block)
+      @members.each(&block)
     end
   end
+
+  class Tags < HashCollection; end
+  class Attributes < HashCollection; end
 
   class Attribute
     attr_reader :name,
@@ -51,6 +53,7 @@ module M3Uzi2
     end
 
     def add_attribute(name, value)
+      fail "Cannot add attributes to a #{self.class.name} that has a value!" if @value
       @attributes[name] = nil
       @attributes[name] = M3Uzi2::Attribute.new(self, name, value)
     end
@@ -66,37 +69,24 @@ module M3Uzi2
     end
 
     def value=(val)
+      fail "Cannot set a value on a #{self.class.name} that has attributes!" if @attributes.size > 0
       @value = val
     end
   end
 
-  class Tags
-    include Enumerable
-
-    def initialize
-      @tags = {}
-    end
-
-    def [](key)
-      return @tags[key]
-    end
-
-    def each(&block)
-      @tags.each(&block)
-    end
-  end
-
+  # MediaSegment is out workhorse for the most part. A segment is what was
+  # described as a file
   class MediaSegment
-    attr_accessor :segment # path, filename or URI
+    attr_accessor :path # path, filename or URI
 
     # validate_presence should check if the file exists
-    def initialize(segment, validate_presence = false)
-      @tags = Tags.new
-      @segment = segment
+    def initialize(path, validate_presence = false)
+      @path = path
     end
 
-    def add_tag(name, value)
-      @tags[name] = M3Uzi2::Tag.new(name, value)
+    def valid?
+      true
+
     end
   end
 end

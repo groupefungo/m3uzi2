@@ -11,7 +11,7 @@ module M3Uzi2
     def initialize(tag_name)
       @name = tag_name
       @attributes = {}
-      @constaints = M3Uzi2::Constraints.new
+      @constraints = Constraints.new
     end
 
     # ==== Description
@@ -30,11 +30,15 @@ module M3Uzi2
     end
 
     def create_attribute(name)
-      return @attributes[name] = AttributeSpecification.new('METHOD')
+      return @attributes[name] = AttributeSpecification.new(name)
     end
 
-    def add_constraint(err_msg, &block)
-      @constaints.add(err_msg, &block)
+    def create_constraint(err_msg, &block)
+      @constaints << Constraint.new(err_msg, &block)
+    end
+
+    def <<(klass)
+      add(klass)
     end
 
     def add(klass)
@@ -59,7 +63,7 @@ module M3Uzi2
     # Givan an instance of a tag, test if the tag and all attributes are valid
     # against the M3U8 RFC.
     def valid?(tag)
-      @constaints.valid?(tag) && @attributes.all? do | k, v |
+      @constraints.valid?(tag) && @attributes.all? do | k, v |
         tag.attributes[k].nil? ? true : v.valid?(tag.attributes[k])
       end
     end

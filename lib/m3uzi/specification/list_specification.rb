@@ -1,4 +1,3 @@
-
 module M3Uzi2
   # Base methods for Playlist & Header specification classes.
   class ListSpecification
@@ -24,12 +23,20 @@ module M3Uzi2
         @tags[tag.name].valid_attribute?(attribute)
     end
 
-    def check_tag(tag)
-      return warning("Invalid Tag '#{tag.name}'") unless valid_tag?(tag.name)
-
-      unless self[tag.name].valid?(tag)
-        return warning("(Tag: #{tag.name}) Invalid Value '#{tag.value}'")
+    # ==== Description
+    # Define the tags for the playlist. Called from the base class
+    # ListSpecification's initializer.
+    def define_tags
+      self.class.tag_list.each do | name |
+        name = name.tr('-','_')
+        require_relative "definitions/#{name.downcase}"
+        Object.const_get("M3Uzi2::#{name}").new(@tags)
       end
+    end
+
+    def check_tag(tag)
+      return false unless valid_tag?(tag.name)
+      return false unless self[tag.name].valid?(tag)
       true
     end
 

@@ -16,9 +16,11 @@ module M3Uzi2
     end
 
     def add(tag)
-      tag.valid?
+
       case tag
       when Tag
+        tag.specification = @_spec
+        tag.valid?
         @_lines << tag
       when MediaSegment
         @_lines << tag

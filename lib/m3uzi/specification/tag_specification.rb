@@ -8,6 +8,9 @@ module M3Uzi2
     attr_reader :name,
                 :attributes
 
+    attr_accessor  :min_version,
+                   :playlist_compatability
+
     def initialize(tag_name)
       @name = tag_name
       @attributes = {}
@@ -67,5 +70,7 @@ module M3Uzi2
         tag.attributes[k].nil? ? true : v.valid?(tag.attributes[k])
       end
     end
+
+
   end
 end

@@ -27,6 +27,9 @@ module M3Uzi2
   #
   class EXT_X_VERSION < ValueTag
     def initialize(tags, tn = 'EXT-X-VERSION')
+      @min_version = 2
+      @playlist_compatability = PlaylistCompatability::BOTH
+
       super(tags, tn)
     end
 

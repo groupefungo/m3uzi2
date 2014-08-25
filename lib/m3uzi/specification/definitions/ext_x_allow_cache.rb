@@ -15,6 +15,9 @@ module M3Uzi2
   # See Section 6.3.3 for more information on the EXT-X-ALLOW-CACHE tag.
   class EXT_X_ALLOW_CACHE < ValueTag
     def initialize(tags, tn = 'EXT-X-ALLOW-CACHE')
+      @min_version = 1
+      @playlist_compatability = PlaylistCompatability::BOTH
+
       super(tags, tn)
     end
 

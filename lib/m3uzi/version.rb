@@ -1,3 +1,3 @@
-class M3Uzi
-  VERSION = '2.0.0'
+module M3Uzi2
+  VERSION = '1.0.0'
 end

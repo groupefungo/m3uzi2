@@ -37,6 +37,9 @@ module M3Uzi2
   #
   class EXT_X_DISCONTINUITY_SEQUENCE < ValueTag
     def initialize(tags, tn = 'EXT-X-DISCONTINUITY-SEQUENCE')
+      @min_version = 6
+      @playlist_compatability = PlaylistCompatability::MEDIA
+
       super(tags, tn)
     end
 

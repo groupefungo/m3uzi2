@@ -18,6 +18,9 @@ module M3Uzi2
   #
   class EXT_X_PLAYLIST_TYPE < ValueTag
     def initialize(tags, tn = 'EXT-X-PLAYLIST-TYPE')
+      @min_version = 3
+      @playlist_compatability = PlaylistCompatability::MEDIA
+
       super(tags, tn)
     end
 

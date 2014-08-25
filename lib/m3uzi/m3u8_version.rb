@@ -1,6 +1,3 @@
-
-require_relative 'types/all'
-
 # Determine the version of an m3u or m3u8 file
 class M3U8VersionInfo
   attr_reader :version

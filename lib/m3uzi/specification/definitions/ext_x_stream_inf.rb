@@ -47,6 +47,9 @@ module M3Uzi2
 
   class EXT_X_STREAM_INF < AttributeTag
     def initialize(tags, tn = 'EXT-X-STREAM-INF')
+      @min_version = 1
+      @playlist_compatability = PlaylistCompatability::MASTER
+
       super(tags, tn)
     end
 

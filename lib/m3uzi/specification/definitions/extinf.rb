@@ -13,6 +13,10 @@ module M3Uzi2
   #
   class EXTINF < ValueTag
     def initialize(tags, tn = 'EXTINF')
+      # TODO: Check this
+      @playlist_compatability = PlaylistCompatability::MEDIA
+      @min_version = 1
+
       super(tags, tn)
     end
 

@@ -8,6 +8,9 @@ module M3Uzi2
   # checked by the file_parser
   class EXTM3U < IndependentTag
     def initialize(tags, tn = 'EXTM3U')
+      @min_version = 1
+      @playlist_compatability = PlaylistCompatability::BOTH
+
       super(tags, tn)
     end
   end

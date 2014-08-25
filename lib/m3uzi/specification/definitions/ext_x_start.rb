@@ -32,6 +32,9 @@ module M3Uzi2
 
   class EXT_X_START < AttributeTag
     def initialize(tags, tn = 'EXT-X-START')
+      @min_version = 6
+      @playlist_compatability = PlaylistCompatability::BOTH
+
       super(tags, tn)
     end
 

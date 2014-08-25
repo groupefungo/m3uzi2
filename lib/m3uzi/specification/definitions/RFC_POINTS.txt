@@ -1,0 +1,26 @@
+
+1) Notes & Language regarding playlist type compatability.
+
+It would be preferable to affirm which playlist type a tag applied to rather
+than use negation. 
+
+"It MUST ONLY appear in a Media Playlist" rather than "It MUST NOT appear in a Master Playlist."
+
+Consistency:
+Language is mixed and ambiguous in several instances:
+
+"In protocol version 6, it MAY appear in a Media Playlist." vs "In protocol version 6, it may appear in any Media Playlist."
+
+
+However it would be preferable if these verbose qualifiers were replaced by
+a specification: e.g.
+
+Playlist Compatability : <Media, Master, or Both>
+
+2) Required vs Optional
+
+
+
+3) Examples
+Are not 8.6, 8.7, and 8.8 invalid since they do not contain an EXT-X-VERSION tag
+specifying version 4?

@@ -1,6 +1,4 @@
 require_relative 'list_specification'
-require_relative 'tag_specification'
-#require_relative 'definitions/playlist'
 
 module M3Uzi2
   # ==== Description
@@ -17,10 +15,4 @@ module M3Uzi2
       super
     end
   end
-end
-
-if $PROGRAM_NAME == __FILE__
-  include M3Uzi2
-
-  PlaylistSpecification.new
 end

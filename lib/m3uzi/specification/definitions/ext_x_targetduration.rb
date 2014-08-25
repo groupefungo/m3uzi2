@@ -20,6 +20,9 @@ module M3Uzi2
   #
   class EXT_X_TARGETDURATION < ValueTag
     def initialize(tags, tn = 'EXT-X-TARGETDURATION')
+      @min_version = 1
+      @playlist_compatability = PlaylistCompatability::MEDIA
+
       super(tags, tn)
     end
 

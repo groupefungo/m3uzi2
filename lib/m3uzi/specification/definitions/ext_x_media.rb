@@ -37,6 +37,9 @@ module M3Uzi2
 
   class EXT_X_MEDIA < AttributeTag
     def initialize(tags, tn = 'EXT-X-MEDIA')
+      @min_version = 4
+      @playlist_compatability = PlaylistCompatability::MASTER
+
       super(tags, tn)
     end
 

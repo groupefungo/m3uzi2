@@ -27,6 +27,9 @@ module M3Uzi2
   #
   class EXT_X_BYTERANGE < ValueTag
     def initialize(tags, tn = 'EXT-X-BYTERANGE')
+      @min_version = 4
+      @playlist_compatability = PlaylistCompatability::MEDIA
+
       super(tags, tn)
     end
 

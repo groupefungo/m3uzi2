@@ -14,6 +14,9 @@ module M3Uzi2
   #
   class EXT_X_ENDLIST < IndependentTag
     def initialize(tags, tn = 'EXT-X-ENDLIST')
+      @min_version = 1
+      @playlist_compatability = PlaylistCompatability::MEDIA
+
       super(tags, tn)
     end
 

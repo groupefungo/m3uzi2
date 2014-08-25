@@ -1,9 +1,19 @@
 module M3Uzi2
-  class TagDefinition
-    attr_reader :name
 
-    INFINITE = 999_999_999_999
-    INFINITY = 999_999_999_999
+  class PlaylistCompatability
+    NONE    = 0b00
+    MASTER  = 0b01
+    MEDIA   = 0b10
+    BOTH    = 0b11
+  end
+
+  class TagDefinition
+    attr_reader :name,
+                :min_version,
+                :playlist_compatability
+
+    INFINITE = 999_999_999
+    INFINITY = 999_999_999
 
     def initialize(tags, tn)
       @name = tn
@@ -13,11 +23,15 @@ module M3Uzi2
         define_attributes(ts) if self.respond_to? :define_attributes
         define_attribute_constraints(ts) if self
           .respond_to? :define_attribute_constraints
+
+        ts.min_version = @min_version
+        ts.playlist_compatability = @playlist_compatability
       end
     end
 
     def valid_instance_constraint(ts, range)
-      ts << Constraint.new("Tag #{ts.name} may only occur #{range} times.") do | tag |
+      ts << Constraint.new(
+        "Tag #{ts.name} may only occur #{range} times.") do | tag |
         true
       end
     end
@@ -26,8 +40,8 @@ module M3Uzi2
     end
   end
 
+  # Value Tags have a value and no attributes
   class ValueTag < TagDefinition
-
     def integer_value_constraint(ts)
       ts << Constraint.new("Invalid Value") do | tag |
         begin
@@ -51,6 +65,7 @@ module M3Uzi2
     end
   end
 
+  # IndependentTags have no value and no attributes
   class IndependentTag < TagDefinition
     def define_constraints(ts)
       nil_value_constraint(ts)
@@ -63,6 +78,7 @@ module M3Uzi2
     end
   end
 
+  # Attribute Tags ONLY have attributes and no value
   class AttributeTag < TagDefinition
   end
 

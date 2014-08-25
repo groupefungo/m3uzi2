@@ -1,3 +1,5 @@
+require_relative 'tag_specification'
+
 module M3Uzi2
   # Base methods for Playlist & Header specification classes.
   class ListSpecification

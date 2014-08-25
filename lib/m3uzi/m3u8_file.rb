@@ -1,6 +1,8 @@
 require 'forwardable'
 
-require_relative 'types/all'
+require_relative 'types/attributes'
+require_relative 'types/tags'
+require_relative 'types/media_segment'
 
 require_relative 'm3u8_playlist'
 require_relative 'm3u8_headers'
@@ -10,33 +12,35 @@ module M3Uzi2
   class M3U8File
     extend Forwardable
 
-    attr_accessor :final_media_file
-
     attr_reader :headers,
-                :playlist,
-                :initial_media_sequence,
-                :sliding_window_duration
+                :playlist
 
     def_delegators :@headers,  :valid_header?
     def_delegators :@playlist, :valid_tag?
 
-    def_delegators :@playlist, :is_vod?,
-                               :is_event?,
-                               :is_live?
-
     # is_master
     #
-    # version
     #
-
-    def initialize(spec = nil)# M3U8Version7Spec)
-      @headers = M3U8Headers.new(spec)
-      @playlist = M3U8Playlist.new(spec)
-      @version_info = M3U8VersionInfo.new
+    def initialize
+      @headers = M3U8Headers.new
+      @playlist = M3U8Playlist.new
     end
 
-    def add_parsed_tag(tag)
-      add(tag.tag, tag.attributes, tag.value)
+    def version
+      tag_v = [@headers.map { | tag | tag.version }.max,
+               @playlist.map { | tag | tag.kind_of?(Tag) ? tag.version : 1 }
+                 .max
+      ].max
+
+      header_v = (v = @headers['EXT-X-VERSION'][0]) ? Integer(v.value) : tag_v
+
+      if tag_v > header_v
+        puts 'WARNING! Version mismatch. Tags indicated that the file should '\
+             "have a version header with a value of #{tag_v} however the"\
+             " EXT-X-VERSION header has a value of only #{header_v}"
+      end
+
+      v ? header_v : tag_v
     end
 
     def add(tag, attributes, value)
@@ -56,33 +60,24 @@ module M3Uzi2
       end
     end
 
+    def add_header_tag(tag)
+      @headers << tag
+    end
+
     def to_s
       @headers.to_s << @playlist.to_s
     end
 
     def create_header(tag, attributes, value)
-      M3U8Headers.create_tag(tag, attributes, value)
+      return M3U8Headers.create_tag(tag, attributes, value)
     end
 
     def create_media_segment(path)
-      M3U8Playlist.create_media_segment(path)
+      return M3U8Playlist.create_media_segment(path)
     end
 
     def create_tag(tag, attributes, value)
-      M3U8Playlist.create_tag(tag, attributes, value)
-
-    end
-
-    #def filenames
-      #@playlist.items(M3Uzi::File).map { |file| file.path }
-    #end
-
-    #def streamnames
-      #@playlist.items(M3Uzi::Stream).map { |stream| stream.path }
-    #end
-
-    def version
-      @version_info.resolve_version(@playlist, @headers)
+      return M3U8Playlist.create_tag(tag, attributes, value)
     end
   end
 end

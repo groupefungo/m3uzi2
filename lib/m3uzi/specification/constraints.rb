@@ -33,7 +33,6 @@ module M3Uzi2
   end
 
   class AttributeConstraint < Constraint
-
     def handle_error(attr)
           err_msg = "WARNING!! " \
             "#{attr.kind_of?(Attribute) ? attr.parent_tag.name + '#' : ''}"\
@@ -49,7 +48,7 @@ module M3Uzi2
           err_msg = "WARNING!! " \
             "#{tag.name} "\
             "Failed Against Constraint With Error: "\
-            "#{error} (VALUE=#{value})"
+            "#{error} (VALUE=#{tag.value})"
           puts err_msg
     end
   end

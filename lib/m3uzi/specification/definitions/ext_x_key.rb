@@ -1,5 +1,4 @@
 require_relative 'tag_definition'
-require 'uri'
 
 module M3Uzi2
   # http://tools.ietf.org/html/draft-pantos-http-live-streaming-13
@@ -32,51 +31,41 @@ module M3Uzi2
       super(tags, tn)
     end
 
-    def define_attributes(ts)
-      ts.create_attributes(%w(METHOD URI IV KEYFORMAT KEYFORMATVERSIONS))
+    def define_attributes
+      @_ts.create_attributes(%w(METHOD URI IV KEYFORMAT KEYFORMATVERSIONS))
     end
 
-    def define_constraints(ts)
-      required_attribute_constraint(ts, 'METHOD')
-      nil_value_constraint(ts)
+    def define_constraints
+      required_attribute_constraint('METHOD')
+      nil_value_constraint
     end
 
-    def define_attribute_constraints(ts)
-      define_method_attribute_constraints(ts)
-      define_uri_attribute_constraints(ts)
-      define_iv_attribute_constraints(ts)
-      define_keyformat_attribute_constraints(ts)
-      define_keyformatversions_attribute_constraints(ts)
-    end
+    def define_attribute_constraints
+      restricted_attribute_value_constraint('METHOD', %w(NONE AES-128 SAMPLE-AES))
+      value_excludes_attribute_constraint('METHOD', 'NONE', 'URI')
+      value_excludes_attribute_constraint('METHOD', 'NONE', 'IV')
+      value_excludes_attribute_constraint('METHOD', 'NONE', 'KEYFORMAT')
+      value_excludes_attribute_constraint('METHOD', 'NONE', 'KEYFORMATVERSIONS')
 
-    def define_keyformat_attribute_constraints(ts)
-    end
+      value_requires_attribute_constraint('METHOD', 'AES-128', 'URI')
+      value_requires_attribute_constraint('METHOD', 'SAMPLE-AES', 'URI')
 
+      quoted_string_value_constraint('KEYFORMAT')
 
-    def define_iv_attribute_constraints(ts)
-    end
-
-    def define_keyformatversions_attribute_constraints(ts)
-    end
-
-    def define_uri_attribute_constraints(ts)
-      ts['URI'] << AttributeConstraint.new('URI is invalid') do | attr |
-        attr.value =~ URI::regexp
+      @_ts['IV'] << AttributeConstraint.new('IV is invalid') do | attr |
+        _all_int?([attr.value]) && attr.value.to_s[0..1] == '0x'
       end
-    end
 
-    def define_method_attribute_constraints(ts)
-      restricted_attribute_value_constraint(ts,
-        'METHOD', %w(NONE AES-128 SAMPLE-AES))
+      quoted_string_value_constraint('KEYFORMATVERSIONS')
 
-      value_excludes_attribute_constraint(ts, 'METHOD', 'NONE', 'URI')
+      @_ts['KEYFORMATVERSIONS'] << AttributeConstraint.new('KEYFORMATVERSIONS is invalid') do | attr |
+        _all_int?(attr.value.tr('"','').split('/'))
+      end
+
+      uri_value_constraint('URI')
+      #@_ts['URI'] << AttributeConstraint.new('URI is invalid') do | attr |
+        #attr.value =~ URI::regexp
+      #end
     end
   end
 end
-
-# Untested - exclusive - not working at 2:12am
-# ts['METHOD'].add_constraint do | attr |
-# %w(URI IV KEYFORMAT KEYFORMATVERSIONS).each do | k |
-## valid_attribute?('METHOD', k) ? false : true
-# end unless val == 'NONE'
-# end

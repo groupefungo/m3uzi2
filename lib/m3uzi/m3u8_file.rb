@@ -12,17 +12,24 @@ module M3Uzi2
     extend Forwardable
 
     attr_reader :headers,
-                :playlist
+                :playlist,
+                :pathname
 
     def_delegators :@headers,  :valid_header?
-    def_delegators :@playlist, :valid_tag?
+    def_delegators :@playlist, :valid_tag?,
+                               :media_segments
 
     # is_master
     #
     #
-    def initialize
+    def initialize(pathname)
+      @pathname = pathname
       @headers = M3U8Headers.new
       @playlist = M3U8Playlist.new
+    end
+
+    def [](tag_name)
+      @headers[tag_name] << @playlist[tag_name]
     end
 
     def version

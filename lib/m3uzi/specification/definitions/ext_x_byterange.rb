@@ -33,20 +33,9 @@ module M3Uzi2
       super(tags, tn)
     end
 
-    def define_constraints(ts)
-      ts << TagConstraint.new("Invalid Value") do | tag |
-        length = tag.value
-        start = 0
-
-        if (pos = tag.value.to_s.index('@'))
-          length, start = [tag.value[0..pos - 1], tag.value[pos + 1..-1]]
-        end
-
-        begin
-          Integer(length) && Integer(start)
-        rescue
-          false
-        end
+    def define_constraints
+      @_ts << TagConstraint.new("Invalid Value") do | tag |
+        _all_int?(_split_val(tag.value.to_s, '@'))
       end
     end
   end

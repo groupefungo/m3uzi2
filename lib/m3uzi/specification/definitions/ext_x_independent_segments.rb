@@ -30,7 +30,7 @@ module M3Uzi2
       super(tags, tn)
     end
 
-    def define_constraints(ts)
+    def define_constraints
       #valid_instance_constraint(ts, 0..INFINITY)
     end
   end

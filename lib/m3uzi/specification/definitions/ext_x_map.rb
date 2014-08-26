@@ -50,14 +50,16 @@ module M3Uzi2
       super(tags, tn)
     end
 
-    def define_attributes(ts)
-      ts.create_attributes(%w(URI BYTERANGE))
+    def define_attributes
+      @_ts.create_attributes(%w(URI BYTERANGE))
     end
 
-    def define_constraints(ts)
+    def define_constraints
     end
 
-    def define_attribute_constraints(ts)
+    def define_attribute_constraints
+      required_attribute_constraint('URI')
+      quoted_string_value_constraint('BYTERANGE')
     end
 
   end

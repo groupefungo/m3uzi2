@@ -38,15 +38,16 @@ module M3Uzi2
       super(tags, tn)
     end
 
-    def define_attributes(ts)
-      ts.create_attributes(%w(TIME-OFFSET PRECISE))
+    def define_attributes
+      @_ts.create_attributes(%w(TIME-OFFSET PRECISE))
     end
 
-    def define_constraints(ts)
+    def define_constraints
+      required_attribute_constraint('TIME-OFFSET')
     end
 
-    def define_attribute_constraints(ts)
+    def define_attribute_constraints
+      restricted_attribute_value_constraint('PRECISE', %w(YES NO))
     end
-
   end
 end

@@ -53,15 +53,20 @@ module M3Uzi2
       super(tags, tn)
     end
 
-    def define_attributes(ts)
-      ts.create_attributes(%w(BANDWIDTH CODECS RESOLUTION AUDIO VIDEO
-                              SUBTITLES CLOSED-CAPTIONS))
+    def define_attributes
+      @_ts.create_attributes(%w(BANDWIDTH CODECS RESOLUTION AUDIO VIDEO
+                                SUBTITLES CLOSED-CAPTIONS))
     end
 
-    def define_constraints(ts)
+    def define_constraints
+
     end
 
-    def define_attribute_constraints(ts)
+    def define_attribute_constraints
+      required_attribute_constraint('BANDWIDTH')
+      integer_value_constraint('BANDWIDTH')
+      quoted_string_value_constraints(%w(CODECS AUDIO VIDEO SUBTITLES))
+      decimal_resolution_value_constraint('RESOLUTION')
     end
 
   end

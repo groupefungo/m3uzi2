@@ -31,8 +31,8 @@ module M3Uzi2
       super(tags, tn)
     end
 
-    def define_constraints(ts)
-      date_value_constraint(ts)
+    def define_constraints
+      date_value_constraint
     end
   end
 end

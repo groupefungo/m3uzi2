@@ -24,10 +24,11 @@ module M3Uzi2
       super(tags, tn)
     end
 
-    def define_constraints(ts)
-      ts << TagConstraint.new('Value must be one of EVENT or VOD') do | tag |
-        %w(EVENT VOD).include?(tag.value)
-      end
+    def define_constraints
+      restricted_value_constraint(%w(EVENT VOD))
+      #@_ts << TagConstraint.new('Value must be one of EVENT or VOD') do | tag |
+        #%w(EVENT VOD).include?(tag.value)
+      #end
     end
   end
 end

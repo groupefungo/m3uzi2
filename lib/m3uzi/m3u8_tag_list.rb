@@ -11,9 +11,12 @@ module M3Uzi2
     end
 
     def [](key)
-      @_lines.select { | tag | tag.name == key }
+      @_lines.select { | tag | tag.kind_of?(Tag) && tag.name == key }
     end
 
+    def media_segments
+      @_lines.select { | tag | tag.kind_of?(MediaSegment) }
+    end
 
     def <<(tag)
       add(tag)

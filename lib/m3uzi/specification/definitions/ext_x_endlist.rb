@@ -20,8 +20,8 @@ module M3Uzi2
       super(tags, tn)
     end
 
-    def define_constraints(ts)
-      valid_instance_constraint(ts, 0..1)
+    def define_constraints
+      valid_instance_constraint(0..1)
     end
   end
 end

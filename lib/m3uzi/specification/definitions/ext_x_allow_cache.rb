@@ -21,10 +21,8 @@ module M3Uzi2
       super(tags, tn)
     end
 
-    def define_constraints(ts)
-      ts << TagConstraint.new("Invalid Value") do | tag |
-        %w(YES NO).include?(tag.value)
-      end
+    def define_constraints
+      restricted_value_constraint(%w(YES NO))
     end
   end
 end

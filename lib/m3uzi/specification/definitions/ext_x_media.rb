@@ -48,12 +48,42 @@ module M3Uzi2
 
     def define_attributes(ts)
       ts.create_attributes(%w( TYPE URI GROUP-ID LANGUAGE ASSOC-LANGUAGE
-                              NAME DEFAULT AUTOSELECT FORCED INSTREAM-ID
-                              CHARACTERISTICS ))
+                               NAME DEFAULT AUTOSELECT FORCED INSTREAM-ID
+                               CHARACTERISTICS ))
     end
 
     def define_attribute_constraints(ts)
+      required_attribute_constraint(ts, 'TYPE')
+      required_attribute_constraint(ts, 'GROUP-ID')
+      required_attribute_constraint(ts, 'NAME')
+
+      define_type_attribute_constraints(ts)
+      define_uri_attribute_constraints(ts)
+
+      quoted_string_value_constraint(ts, 'GROUP-ID')
+      quoted_string_value_constraint(ts, 'LANGUAGE')
+      quoted_string_value_constraint(ts, 'ASSOC-LANGUAGE')
+      quoted_string_value_constraint(ts, 'CHARACTERISTICS')
+      # TODO : CHARACTERISTICS - check if uti
+
+      restricted_attribute_value_constraint(ts, 'DEFAULT', %w(YES NO))
+      restricted_attribute_value_constraint(ts, 'AUTOSELECT', %w(YES NO))
+
+      # TODO: AUTOSELECT If it is present,
+      # its value MUST be YES if the value of the DEFAULT attribute is YES.
+      restricted_attribute_value_constraint(ts, 'FORCED', %w(YES NO))
+
+      value_requires_attribute_constraint(ts, 'TYPE', 'CLOSED-CAPTIONS',
+                                          'INSTREAM-ID')
     end
 
+    def define_type_attribute_constraints(ts)
+      restricted_attribute_value_constraint(ts,
+        'TYPE', %w(AUDIO VIDEO SUBTITLES CLOSED-CAPTIONS))
+    end
+
+    def define_uri_attribute_constraints(ts)
+      value_excludes_attribute_constraint(ts, 'TYPE', 'CLOSED-CAPTIONS', 'URI')
+    end
   end
 end

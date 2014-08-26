@@ -13,9 +13,10 @@ module M3Uzi2
     def to_s
       message = "#{@message} "
 #      message << "(value='#{val}')" if val
-      message << "\n#{@location[0]}:#{@location[1]}"
+#      message << "\n#{@location[0]}:#{@location[1]}"
     end
   end
+
 
   # TODO: Seperate AttributeConstraints and TagConstraints?
   class Constraint
@@ -28,6 +29,28 @@ module M3Uzi2
 
     def test(tag_or_attibute)
       @block.call(tag_or_attibute) ? true : false
+    end
+  end
+
+  class AttributeConstraint < Constraint
+
+    def handle_error(attr)
+          err_msg = "WARNING!! " \
+            "#{attr.kind_of?(Attribute) ? attr.parent_tag.name + '#' : ''}"\
+            "#{attr.name} "\
+            "Failed Against Constraint With Error: "\
+            "#{error} (VALUE=#{attr.value})"
+          puts err_msg
+    end
+  end
+
+  class TagConstraint < Constraint
+    def handle_error(tag)
+          err_msg = "WARNING!! " \
+            "#{tag.name} "\
+            "Failed Against Constraint With Error: "\
+            "#{error} (VALUE=#{value})"
+          puts err_msg
     end
   end
 
@@ -53,15 +76,13 @@ module M3Uzi2
       end
     end
 
-    def valid?(attribute_or_tag)
+    def valid?(attr_or_tag)
       @constraints.each do | constraint |
-        unless constraint.test(attribute_or_tag)
-          puts "WARNING @ #{attribute_or_tag.name} Failed Against Constraint With Error: "\
-            "#{constraint.error}"
+        unless constraint.test(attr_or_tag)
+          constraint.handle_error(attr_or_tag)
           return false
         end
       end
-
       true
     end
   end

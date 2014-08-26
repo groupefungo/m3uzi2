@@ -6,7 +6,6 @@ require_relative 'types/media_segment'
 
 require_relative 'm3u8_playlist'
 require_relative 'm3u8_headers'
-require_relative 'm3u8_version'
 
 module M3Uzi2
   class M3U8File

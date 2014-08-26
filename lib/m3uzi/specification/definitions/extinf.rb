@@ -21,7 +21,7 @@ module M3Uzi2
     end
 
     def define_constraints(ts)
-      ts << Constraint.new("Invalid Value") do | tag |
+      ts << TagConstraint.new("Invalid Value") do | tag |
         num = tag.value
         (pos = tag.value.to_s.index(',')) ? num = tag.value[0..pos - 1] : nil
         true if Float(num) rescue false

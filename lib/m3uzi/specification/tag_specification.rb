@@ -70,7 +70,5 @@ module M3Uzi2
         tag.attributes[k].nil? ? true : v.valid?(tag.attributes[k])
       end
     end
-
-
   end
 end

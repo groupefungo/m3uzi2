@@ -16,6 +16,10 @@ module M3Uzi2
       @parent_tag = parent_tag
     end
 
+    def parent_attribute(attr_name)
+      parent_tag.attributes[attr_name]
+    end
+
     def valid?
       @parent_tag.specification.check_attribute(self)
     end

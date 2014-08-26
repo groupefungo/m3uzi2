@@ -37,13 +37,8 @@ module M3Uzi2
     end
 
     def define_constraints(ts)
-      ts << Constraint.new('METHOD attribute is required') do | tag |
-        tag.attributes['METHOD'].nil? == false
-      end
-
-      ts << Constraint.new("No value allowed for #{ts.name}") do | tag |
-        tag.value.nil? == true
-      end
+      required_attribute_constraint(ts, 'METHOD')
+      nil_value_constraint(ts)
     end
 
     def define_attribute_constraints(ts)
@@ -65,27 +60,16 @@ module M3Uzi2
     end
 
     def define_uri_attribute_constraints(ts)
-      ts['URI'] << Constraint.new(
-        'URI must only be present if the METHOD is AES-128 or SAMPLE-AES') do | attr |
-        %w(AES-128 SAMPLE-AES).include?(attr.parent_tag.attributes['METHOD'].value)
-      end
-
-      ts['URI'] << Constraint.new(
-        'URI must not be present if METHOD = NONE') do | attr |
-        (attr.parent_tag.attributes['METHOD'].value != 'NONE') &&
-          !attr.parent_tag.attributes['URI'].nil?
-      end
-
-      ts['URI'] << Constraint.new('URI is invalid') do | attr |
+      ts['URI'] << AttributeConstraint.new('URI is invalid') do | attr |
         attr.value =~ URI::regexp
       end
     end
 
     def define_method_attribute_constraints(ts)
-      ts['METHOD'] << Constraint.new(
-        'valid values for METHOD are NONE AES-128 SAMPLE-AES)') do | attr |
-        %w(NONE AES-128 SAMPLE-AES).include?(attr.value)
-      end
+      restricted_attribute_value_constraint(ts,
+        'METHOD', %w(NONE AES-128 SAMPLE-AES))
+
+      value_excludes_attribute_constraint(ts, 'METHOD', 'NONE', 'URI')
     end
   end
 end

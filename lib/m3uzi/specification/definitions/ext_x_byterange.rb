@@ -34,7 +34,7 @@ module M3Uzi2
     end
 
     def define_constraints(ts)
-      ts << Constraint.new("Invalid Value") do | tag |
+      ts << TagConstraint.new("Invalid Value") do | tag |
         length = tag.value
         start = 0
 

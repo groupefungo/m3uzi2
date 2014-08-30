@@ -98,6 +98,11 @@ module M3Uzi2
       check_line(line, line_num, ',,', ',', 'Empty attribute ",,". (fixing)')
     end
 
+    def handle_error(message, force_fail = false)
+      fail(message) if @failure_method == :fail || force_fail
+      puts message
+    end
+
     private
 
     def check_line(line, num, match, fix, error)
@@ -115,11 +120,6 @@ module M3Uzi2
     # must begin with EXTINF
     def valid_header?(line)
       line == '#EXTM3U' ? true : false
-    end
-
-    def handle_error(message, force_fail = false)
-      fail(message) if @failure_method == :fail || force_fail
-      puts message
     end
   end
 end

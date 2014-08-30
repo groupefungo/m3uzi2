@@ -1,72 +1,50 @@
-require 'm3uzi/m3u8_encryption'
-require 'm3uzi/m3u8_byterange'
-require 'm3uzi/types/file'
+module M3Uzi2
+  # blah
+  class M3U8Writer
+    def initialize(m3u8_file)
+      @m3u8_file = m3u8_file
 
-class M3U8Writer
-  def initialize(pathname, m3u8_file)
-    @pathname = pathname
-    @m3u8_file = m3u8_file
+      @write_method = :normal
+    end
 
-    @encryptor = M38UEncryption.new
-    @byte_range = M3U8ByteRange.new
-  end
+    # ==== Description
+    # Set the read method.
+    #
+    # +val+ :: MUST be either :flock or :normal. :flock will set the file
+    # to be opened exclusively locked(LOCK_EX).
+    def write_method=(val)
+      @write_method = val if %w(:flock :normal).include(val)
+    end
 
-  def write_to_io(io_stream)
-    @encryptor.reset
-    @byte_range.reset
+    def write(stream = nil)
+      handle_error('No M3U8File specified', true) if @m3u8_file.nil?
+      stream.nil? ? write_file(@m3u8_file.pathname) : write_io_stream(stream)
+    end
 
-    write_headers(io_stream, @m3u8_file)
-
-    # playlist_items
-    @m3u8_file.items.each do |item|
-      next unless item.valid?
-
-      if item.kind_of?(M3uzi::File)
-        encryption_key_line = generate_encryption_key_line(item)
-        io_stream << (encryption_key_line + "\n") if encryption_key_line
-
-        byterange_line = generate_byterange_line(item)
-        io_stream << (byterange_line + "\n") if byterange_line
+    def write_file(pathname)
+      File.open(pathname, 'w') do | f |
+        f.flock(File::LOCK_EX) if @write_method == :flock
+        write_io_stream(f)
       end
-
-      io_stream << (item.format + "\n")
     end
 
-    # endlist
-    io_stream << "#EXT-X-ENDLIST\n" if items(M3Uzi::File).length > 0 && (@final_media_file || @playlist_type == :vod)
+    def write_io_stream(stream)
+      write_header(stream, @m3u8_file.headers)
+      write_playlist(stream, @m3u8_file.headers)
+    end
+
+    private
+
+    def write_playlist(io_stream, playlist)
+      playlist.each do | item |
+        io_stream << item << '\n'
+      end
+    end
+
+    def write_header(io_stream, headers)
+      headers.each do | item |
+        io_stream << item << '\n'
+      end
+    end
   end
-
-  def write(path)
-    # TODO: Flock
-    ::File.open(path, "w") { |f| write_to_io(f) }
-  end
-
-  private
-
-  def write_headers(io_stream, m3u8_file)
-    io_stream << "#EXTM3U\n"
-
-    version = m3u8_file.version
-    io_stream << "#EXT-X-VERSION:#{version}\n" if version > 1
-
-    if m3u8_file.is_event? || m3u8_file.is_vod?
-      io_stream << "#EXT-X-PLAYLIST-TYPE:#{m3u8_file.type}\n"
-      # BUG??? - wheres the end - here or later?
-    end
-
-    if m3u8_file.items(File).length > 0
-      io_stream << "#EXT-X-MEDIA-SEQUENCE:#{m3u8_file.initial_media_sequence + @removed_file_count}\n" if @playlist_type == :live
-      max_duration = valid_items(File).map { |f| f.duration.to_f }.max || 10.0
-      io_stream << "#EXT-X-TARGETDURATION:#{max_duration.ceil}\n"
-    end
-
-    # header_tags
-    @header_tags.each do |item|
-      io_stream << (item.format + "\n") if item.valid?
-    end
-
-
-  end
-
 end
-

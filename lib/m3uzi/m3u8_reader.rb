@@ -114,7 +114,7 @@ module M3Uzi2
 
     def add_parsed_tag(tag)
       handle_error("Could not parse #{tag.tag}") if tag.nil?
-      @m3u8_file.add(tag.tag, tag.attributes, tag.value)
+      @m3u8_file.create_and_add(tag.tag, tag.attributes, tag.value)
     end
 
     # must begin with EXTINF

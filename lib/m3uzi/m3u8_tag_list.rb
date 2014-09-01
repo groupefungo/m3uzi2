@@ -1,10 +1,10 @@
 require_relative 'types/tags'
 
 module M3Uzi2
-
   # Base class for Headers and Playlist
   class M3U8TagList
     include Enumerable
+
 
     def initialize
       @_lines = []
@@ -22,8 +22,28 @@ module M3Uzi2
       add(tag)
     end
 
+    def each
+      return enum_for(:each) unless block_given?
+      @_lines.each { |e| yield(e) }
+    end
+
+    def add(tag)
+      return nil unless tag.kind_of? Tag
+
+      if tag.specification.nil?
+        tag.specification = self.class.specification
+      end
+
+      tag.valid?
+      return @_lines << tag
+    end
+
+    def to_s
+      @_lines.to_s
+    end
+
     def self.create_tag(name, attributes, value)
-      tag = M3Uzi2::Tag.new(name, value)
+      tag = Tag.new(name, value)
 
       attributes.split(',').each do | attr |
         tag.add_attribute(*attr.split('='))
@@ -32,14 +52,10 @@ module M3Uzi2
       return tag
     end
 
-    def each
-      return enum_for(:each) unless block_given?
-      @_lines.each { |e| yield(e) }
-    end
+    protected
 
-    def to_s
-      @_lines.to_s
+    class << self
+      attr_accessor :_specification
     end
   end
-
 end

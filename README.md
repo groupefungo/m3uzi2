@@ -1,26 +1,30 @@
-M3Uzi
+M3Uzi2
 ======
 
-Read and write M3U files with (relative) ease.
+This started life as a simple bug fix of M3uzi but ended up becoming such a
+major rewrite that there is very little of the original m3uzi remaining.
+
+- Read and write M3U(8) files.
+- Validate files and tags against version 7 of the specifiction.
+  (http://tools.ietf.org/html/draft-pantos-http-live-streaming-13)
 
 Usage
 ------
 
 Read an M3U file:
 
-    M3Uzi.read("/path/to/file.m3u8")
+  m3u = M3Uzi2::M3U8File.new("path/to/file")
+  m3u_reader = M3Uzi2::M3U8Reader.new(m3u)
+  m3u_reader.read
 
 Write an M3U file:
 
+  m3u_writer =
     m3u.write("/path/to/file.m3u8")
 
-Get a list of filenames:
+Get a list of media segments:
 
-    m3u.filenames
-
-Get all file reference objects:
-
-    m3u.files
+    m3u.media_segements
 
 Add a file to the M3U index:
 
@@ -50,12 +54,6 @@ Add a tag to the M3U index (custom tags even):
       tag.value = "1"
     end
 
-Add a comment:
-
-    m3u << "Comment"
-    m3u.add_comment("Comment")
-
-
 NOTES
 ------
 * Target duration will be calculated and included if omitted
@@ -63,11 +61,5 @@ NOTES
 
 TODO
 -----
-
-* Tags KEY, PROGRAM-DATE-TIME, and DISCONTINUITY are not supported
-* Stream info is not working yet
-* Tests need to be written
-* Needs to be turned into a gem
-
 
 (c) 2010 Brandon Arbini / Zencoder, Inc.

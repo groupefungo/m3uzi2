@@ -44,13 +44,12 @@ module M3Uzi2
     # initializing the class. The tags will be read into the M3U8File passed
     # in the initializer.
     def read(stream = nil)
-      handle_error('No M3U8File specified', true) if @m3u8_file.nil?
       process (stream.nil? ? read_file(@m3u8_file.pathname) : read_io_stream(stream)),
               @m3u8_file
-
     end
 
     def read_file(pathname)
+      handle_error('No M3U8File specified', true) if @m3u8_file.nil?
       unless File.exist?(pathname)
         handle_error("File #{pathname} does not exist!", true)
       end

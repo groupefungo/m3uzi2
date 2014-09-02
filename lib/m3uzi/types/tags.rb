@@ -1,4 +1,5 @@
 require_relative '../error_handler'
+require_relative 'attributes'
 
 module M3Uzi2
   class Tags < Hash; end
@@ -17,7 +18,7 @@ module M3Uzi2
       @name = name
       @value = value
 
-      @attributes = M3Uzi2::Attributes.new
+      @attributes = Attributes.new
     end
 
     def add_attributes(attributes)

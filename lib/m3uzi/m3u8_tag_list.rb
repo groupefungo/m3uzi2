@@ -1,4 +1,6 @@
 require_relative 'types/tags'
+require_relative 'types/attributes'
+require_relative 'types/media_segment'
 
 module M3Uzi2
   # Base class for Headers and Playlist

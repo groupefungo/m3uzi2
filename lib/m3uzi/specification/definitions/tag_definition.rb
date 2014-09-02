@@ -2,16 +2,28 @@ require 'uri'
 
 module M3Uzi2
 
+
+  # There are severl tags which can be used either in a media playlist or a
+  # master playlist, but not both. There are several tags which can be used
+  # in both types of play list. This class gives us:
+  #
+  # 1) Constants to label the type of list the tag is compatable with.
+  # 2) a means to check if any of the tags in the headers and playlist of
+  #    a file violate the rules.
+  #
   class PlaylistCompatability
     NONE    = 0b11
     MASTER  = 0b01
     MEDIA   = 0b10
     BOTH    = 0b00
 
+    # a valid set of headers + playlist should return either 0, 1 or 2
+    # if the value >= NONE (i.e. 3) then a tag is present which shouldnt be
     def self.check(headers, playlist)
-      or_array(headers) | or_array(playlist) < NONE
+      (or_array(headers) | or_array(playlist)) < NONE
     end
 
+    # or every value in the array with the previous result.
     def self.or_array(arr)
       arr.inject(0b00) { | e, a | a.playlist_compatability | e }
     end

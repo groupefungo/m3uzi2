@@ -63,9 +63,6 @@ module M3Uzi2
       end
 
       uri_value_constraint('URI')
-      #@_ts['URI'] << AttributeConstraint.new('URI is invalid') do | attr |
-        #attr.value =~ URI::regexp
-      #end
     end
   end
 end

@@ -1,5 +1,5 @@
 module M3Uzi2
-  # Abstraction for a line of a file that has been parsed into tag
+  # Abstraction for a line of a file that has been parsed into tag,
   # attribute, value.
   class M3U8ParsedTag
     attr_reader :tag,
@@ -35,6 +35,7 @@ module M3Uzi2
   #  EXT-X-START:<attribute list>
   #  EXT-X-VERSION:<n>
 
+  # Note that the parser is primarily used by the reader
   class M3U8TagParser
     def parse(line, _m3u8_file)
       parse_line(line)
@@ -83,6 +84,7 @@ module M3Uzi2
     end
 
     # Test if a line is valid which means no whitespace seperating tags
+    #
     def valid?(line)
       true
     end

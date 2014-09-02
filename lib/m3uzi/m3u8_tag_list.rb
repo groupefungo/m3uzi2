@@ -5,7 +5,6 @@ module M3Uzi2
   class M3U8TagList
     include Enumerable
 
-
     def initialize
       @_lines = []
     end
@@ -35,6 +34,7 @@ module M3Uzi2
       end
 
       tag.valid?
+
       return @_lines << tag
     end
 
@@ -44,10 +44,7 @@ module M3Uzi2
 
     def self.create_tag(name, attributes, value)
       tag = Tag.new(name, value)
-
-      attributes.split(',').each do | attr |
-        tag.add_attribute(*attr.split('='))
-      end if attributes
+      tag.add_attributes(attributes) unless attributes.nil?
 
       return tag
     end

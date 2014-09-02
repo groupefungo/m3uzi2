@@ -49,7 +49,7 @@ module M3Uzi2
       return warning "(Tag: #{tag.name}) "\
         "Invalid Attribute '#{attr.name}'" unless valid_attribute?(tag, attr)
 
-      return warning "(Tag: #{tag.name}, Attribute: #{attribute.name})"\
+      return warning "(Tag: #{tag.name}, Attribute: #{attr.name})"\
         " Invalid Value '#{attr.value}'" unless self[tag.name][attr.name]
           .valid?(attr)
 

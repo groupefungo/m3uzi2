@@ -1,12 +1,13 @@
-require 'logger'
 require_relative 'm3u8_tag_parser'
 require_relative 'm3u8_file'
+require_relative 'error_handler'
 
 module M3Uzi2
   class M3U8Reader
+    include ErrorHandler
+
     # ==== Description
     attr_reader :m3u8_file,
-                :failure_method,
                 :read_method
 
     # ==== Description
@@ -23,20 +24,10 @@ module M3Uzi2
     # m3uzi2.read
     #
     def initialize(m3u8_file, parser = nil)
-      @failure_method = :warn
       @read_method = :normal
 
       @m3u8_file = m3u8_file
       @parser = M3U8TagParser.new if parser.nil?
-    end
-
-    # ==== Description
-    # Set how the reader deals with errors. :warn logs a warning,
-    # :fail will cause an error
-    #
-    # +val+ :: MUST be a symbol, either :warn (default) or :fail
-    def failure_method=(val)
-      @failure_method = val if %w(:warn :fail).include(val)
     end
 
     # ==== Description
@@ -98,11 +89,6 @@ module M3Uzi2
       check_line(line, line_num, ',,', ',', 'Empty attribute ",,". (fixing)')
     end
 
-    def handle_error(message, force_fail = false)
-      fail(message) if @failure_method == :fail || force_fail
-      puts message
-    end
-
     private
 
     def check_line(line, num, match, fix, error)
@@ -132,37 +118,15 @@ def test_reader(file)
   m3uzi2 = M3Uzi2::M3U8Reader.new(m3u8_file)
   m3uzi2.read
 
-  m3u8_file.headers.each do | tag |
-    puts "#{tag.to_s}  --  #{tag.version}"
-  end
-
-  m3u8_file.playlist.each do | tag |
-    if tag.kind_of? M3Uzi2::MediaSegment
-      puts tag.to_s
-    else
-      puts "#{tag.to_s}  --  #{tag.version}"
-    end
-  end
-
-  puts "*************"
+  puts "*****VERSION********"
   puts m3u8_file.version
-  puts "*************"
-  puts m3u8_file['EXTINF']
-  puts m3u8_file.media_segments
-  m3u8_file.media_segments[0].path = "TEST" unless m3u8_file.media_segments.nil?
-  puts m3u8_file.media_segments
+  puts "*****TYPE********"
+  puts m3u8_file.type
+  puts "****VALID*********"
+  puts m3u8_file.valid?
+  puts "******************"
 
-
-#  puts m3u8_file.to_s
-
-  #m3uzi2.playlist.items.each do | f |
-    #puts "Invalid Tag #{f.inspect}" unless f.valid?
-  #end
-  #return m3uzi.is_valid?
-#rescue Exception => e
-  #puts "#{file} FAILED .."
-  #puts e#.message
-  #return false
+  m3u8_file.dump
 end
 
 if $PROGRAM_NAME == __FILE__

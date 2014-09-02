@@ -3,10 +3,18 @@ require 'uri'
 module M3Uzi2
 
   class PlaylistCompatability
-    NONE    = 0b00
+    NONE    = 0b11
     MASTER  = 0b01
     MEDIA   = 0b10
-    BOTH    = 0b11
+    BOTH    = 0b00
+
+    def self.check(headers, playlist)
+      or_array(headers) | or_array(playlist) < NONE
+    end
+
+    def self.or_array(arr)
+      arr.inject(0b00) { | e, a | a.playlist_compatability | e }
+    end
   end
 
 
@@ -27,6 +35,7 @@ module M3Uzi2
       define_attributes if self.respond_to? :define_attributes
       define_attribute_constraints if self.respond_to? :define_attribute_constraints
 
+      # TODO: Deprecate
       @_ts.min_version = @min_version
       @_ts.playlist_compatability = @playlist_compatability
     end
@@ -38,12 +47,24 @@ module M3Uzi2
       end
     end
 
-    def valid_instance_constraint(range)
-      @_ts << TagConstraint.new(
-        "Tag #{@_ts.name} may only occur #{range} times.") do | tag |
-        true # TODO: implement
-      end
+    def min_version_constraint(version)
+      @_ts.min_version = version
     end
+
+    def playlist_compatability_constraint(ps)
+      @_ts.playlist_compatability = ps
+    end
+
+    def valid_occurance_constraint(range)
+      @_ts.valid_occurance_range = range
+    end
+
+    #def valid_instance_constraint(range)
+      #@_ts << TagConstraint.new(
+        #"Tag #{@_ts.name} may only occur #{range} times.") do | tag |
+        #true # TODO: implement
+      #end
+    #end
 
     def mutual_exclusivity_constraint(arr)
     end
@@ -59,6 +80,13 @@ module M3Uzi2
       end
     end
 
+    protected
+
+    def strip_quotes(str)
+      qs = ['\'', '"']
+      str[(qs.include?(str[0]) ? 1 : 0) .. (qs.include?(str[-1]) ? -2 : -1)]
+    end
+
     def _split_val(str, chr)
       if (pos = str.to_s.index(chr))
         return [str[0..pos - 1], str[pos + 1..-1]]
@@ -68,10 +96,8 @@ module M3Uzi2
     end
 
     def _all_int?(args)
-      args.all? { | i | Integer(i) }
+      [*args].all? { | i | Integer(i) }
     rescue
-      #puts "***************"
-      #puts args.inspect
       false
     end
 
@@ -86,18 +112,24 @@ module M3Uzi2
   # Value Tags have a value and no attributes
   class ValueTag < TagDefinition
     def restricted_value_constraint(arr)
-      @_ts << TagConstraint.new("Invalid Value") do | tag |
+      @_ts << TagConstraint.new("Invalid Restricted Value") do | tag |
         arr.include?(tag.value)
       end
     end
 
     def integer_value_constraint
-      @_ts << TagConstraint.new("Invalid Value") do | tag |
+      @_ts << TagConstraint.new("Invalid Integer Value") do | tag |
         begin
           true if Integer(tag.value)
         rescue
           false
         end
+      end
+    end
+
+    def byte_range_constraint
+      @_ts << TagConstraint.new("Invalid Byte Range Value") do | tag |
+        _all_int?(_split_val(tag.value.to_s, '@'))
       end
     end
 
@@ -150,14 +182,13 @@ module M3Uzi2
     end
 
     def uri_value_constraint(attr_name)
-      @_ts[attr_name] << AttributeConstraint.new("Value must be a URI") do | attr |
+      @_ts[attr_name] << AttributeConstraint.new('Value must be a URI') do | attr |
         true # attr.value.tr("\"", '') =~ URI::regexp
       end
     end
 
-
     def integer_value_constraint(attr_name)
-      @_ts[attr_name] << AttributeConstraint.new("Value must be an Integer") do | attr |
+      @_ts[attr_name] << AttributeConstraint.new('Value must be an Integer') do | attr |
         _all_int?([attr.value])
       end
     end
@@ -174,6 +205,12 @@ module M3Uzi2
       msg = "Valid values for #{attr_name} are #{arr.join ','}"
       @_ts[attr_name] << AttributeConstraint.new(msg) do | attr |
         arr.include?(attr.value)
+      end
+    end
+
+    def byte_range_attribute_constraint(attr_name)
+      @_ts[attr_name] << AttributeConstraint.new('Invalid Byte Range Value') do | tag |
+        _all_int?(_split_val(strip_quotes(tag.value.to_s), '@'))
       end
     end
 

@@ -9,6 +9,7 @@ module M3Uzi2
                 :attributes
 
     attr_accessor  :min_version,
+                   :valid_occurance_range,
                    :playlist_compatability
 
     def initialize(tag_name)

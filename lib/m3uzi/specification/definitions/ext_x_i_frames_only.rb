@@ -30,7 +30,7 @@ module M3Uzi2
   # The EXT-X-I-FRAMES-ONLY tag MUST NOT appear in a Master Playlist.
   #
   class EXT_X_I_FRAMES_ONLY < IndependentTag
-    def initialize(tags, tn = 'EXT_X_I_FRAMES_ONLY')
+    def initialize(tags, tn = 'EXT-X-I-FRAMES-ONLY')
       @min_version = 4
       @playlist_compatability = PlaylistCompatability::MEDIA
 

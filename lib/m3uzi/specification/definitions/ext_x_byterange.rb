@@ -34,9 +34,7 @@ module M3Uzi2
     end
 
     def define_constraints
-      @_ts << TagConstraint.new("Invalid Value") do | tag |
-        _all_int?(_split_val(tag.value.to_s, '@'))
-      end
+      byte_range_constraint
     end
   end
 end

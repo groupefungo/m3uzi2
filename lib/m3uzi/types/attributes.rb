@@ -3,6 +3,19 @@ module M3Uzi2
     def to_s
       self.map { | k, v | v.to_s }.join(',')
     end
+
+    def self.parse(str)
+      err_msg = 'Invalid Attribute/Value Pair: '
+      if str.index(',').nil?
+        fail err_msg << str unless str.index('=')
+        yield str.split('=') if block_given?
+      else
+        str.split(',').each do | attr |
+          fail err_msg << attr unless attr.index('=')
+          yield attr.split('=') if block_given?
+        end
+      end
+    end
   end
 
   class Attribute

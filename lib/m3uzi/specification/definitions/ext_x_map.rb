@@ -60,6 +60,7 @@ module M3Uzi2
     def define_attribute_constraints
       required_attribute_constraint('URI')
       quoted_string_value_constraint('BYTERANGE')
+      byte_range_attribute_constraint('BYTERANGE')
     end
 
   end

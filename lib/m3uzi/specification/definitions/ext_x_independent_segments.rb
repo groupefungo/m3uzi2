@@ -23,7 +23,7 @@ module M3Uzi2
   # protocol.
   #
   class EXT_X_INDEPENDENT_SEGMENTS < IndependentTag
-    def initialize(tags, tn = 'EXT-X-INDEPENDENT_SEGMENTS')
+    def initialize(tags, tn = 'EXT-X-INDEPENDENT-SEGMENTS')
       @min_version = 6
       @playlist_compatability = PlaylistCompatability::MASTER
 

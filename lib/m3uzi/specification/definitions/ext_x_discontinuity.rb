@@ -32,7 +32,7 @@ module M3Uzi2
     end
 
     def define_constraints
-      valid_instance_constraint(0..INFINITY)
+      valid_occurance_constraint((0..INFINITY))
     end
   end
 end

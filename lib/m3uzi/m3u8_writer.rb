@@ -1,6 +1,9 @@
+require_relative "error_handler"
+
 module M3Uzi2
   # blah
   class M3U8Writer
+    include ErrorHandler
     def initialize(m3u8_file)
       @m3u8_file = m3u8_file
 

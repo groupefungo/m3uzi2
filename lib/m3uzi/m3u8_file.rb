@@ -6,10 +6,12 @@ require_relative 'types/media_segment'
 
 require_relative 'm3u8_playlist'
 require_relative 'm3u8_headers'
+require_relative "error_handler"
 
 module M3Uzi2
   # A representation/container for an M3U or M3U8 File
   class M3U8File
+    include ErrorHandler
     extend Forwardable
 
     attr_reader :headers,
@@ -18,8 +20,6 @@ module M3Uzi2
 
     attr_accessor :pathname
 
-    # def_delegators :@headers,  :valid_header?
-    # def_delegators :@playlist, :valid_tag?,
     def_delegator :@playlist, :media_segments
 
     def initialize(pathname = nil)
@@ -34,7 +34,7 @@ module M3Uzi2
     # of tag_name, attributes and value. NOTE THAT THE TAG OR MEDIA SEGMENT
     # IS RETURNED BUT **IS NOT** ADDED TO THE FILE.
     def self.create_tag(tag, attributes, value)
-      fail 'BOTH ATTRIBUTE AND VALUE SET'\
+      handle_error 'BOTH ATTRIBUTE AND VALUE SET'\
         "#{tag} :: #{attributes} :: #{value}" if attributes && value
 
       if tag.nil?
@@ -48,7 +48,16 @@ module M3Uzi2
         return create_header_tag(tag, attributes, value)
       end
 
-      fail "UNKNOWN #{tag} :: #{attributes} :: #{value}"
+      handle_error "UNKNOWN #{tag} :: #{attributes} :: #{value}"
+      nil
+    end
+
+    def type
+      unless PlaylistCompatability.check(@headers, @playlist)
+        handle_error "File Mixes Incompatable Playlist Tag Types"
+      end
+
+      @type
     end
 
     # ==== Description
@@ -96,7 +105,7 @@ module M3Uzi2
     # warning will be raised if the version is less than the version that is
     # required by the specification due to the use of tags from a later version
     # of the specification.
-    def version
+    def version(nil_on_mismatch = false)
       tag_v = [@headers.map { | t | t.version }.max,
                @playlist.map { | t | t.kind_of?(Tag) ? t.version : 1 }.max
       ].max
@@ -104,18 +113,32 @@ module M3Uzi2
       header_v = (v = @headers['EXT-X-VERSION'][0]) ? Integer(v.value) : tag_v
 
       if tag_v > header_v
-        puts 'WARNING! Version mismatch. Tags indicated that the file should '\
-             "have a version header with a value of #{tag_v} however the"\
-             " EXT-X-VERSION header has a value of only #{header_v}"
+        handle_error 'WARNING! Version mismatch. Tags indicated that the file '\
+             "should have a version header with a value of #{tag_v}, however "\
+             "the EXT-X-VERSION header has a value of only #{header_v}"
+        return nil if nil_on_mismatch
       end
 
       v ? header_v : tag_v
     end
 
     def valid?
+      @headers.all? { | h | h.valid? } &&
+        @playlist.all? { | p | p.valid? } &&
+        version(true) &&
+        PlaylistCompatability.check(@headers, @playlist)
+    end
+
+    def dump
+      @headers.each { | h | dump_tag(h) }
+      @playlist.each { | h | dump_tag(h) }
     end
 
     private
+
+    def dump_tag(tag)
+      puts "#{tag.class} -- comp: #{tag.playlist_compatability} version:#{tag.version} -- valid?#{tag.valid?} :: #{tag.to_s} "
+    end
 
     # Note: I'm wondering if this should be public.
     # Return the list depending on the tag type or name
@@ -149,7 +172,6 @@ module M3Uzi2
         t.specification = M3U8Playlist.specification
         t.valid?
       end
-
     end
   end
 end

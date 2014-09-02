@@ -12,6 +12,15 @@ module M3Uzi2
       @path
     end
 
+    def version
+      1
+    end
+
+
+    def playlist_compatability
+      0x00
+    end
+
     def to_s
       @path
     end

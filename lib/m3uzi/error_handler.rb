@@ -1,13 +1,11 @@
 require 'logger'
 
+# Simply error handling and logging.
 module ErrorHandler
   class << self
+    attr_writer :logger
     def logger
       @logger ||= Logger.new($stdout)
-    end
-
-    def logger=(logger)
-      @logger = logger
     end
 
     # ==== Description
@@ -30,7 +28,6 @@ module ErrorHandler
   end
 
   def self.included(base)
-    puts "INCLUDED"
     class << base
       def logger
         ErrorHandler.logger
@@ -41,17 +38,20 @@ module ErrorHandler
       end
 
       def handle_error(message, force_fail = false)
-        ErrorHandler.failure_method
+        ErrorHandler.handle_error(message, force_fail)
       end
     end
   end
 
-  def handle_error(message, force_fail = false)
+  def failure_method
     ErrorHandler.failure_method
   end
-  #def logger
-    #Logging.logger
-  #end
 
+  def handle_error(message, force_fail = false)
+    ErrorHandler.handle_error(message, force_fail)
+  end
 
+  def logger
+    Logging.logger
+  end
 end

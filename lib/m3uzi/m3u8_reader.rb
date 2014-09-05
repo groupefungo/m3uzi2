@@ -3,6 +3,8 @@ require_relative 'm3u8_file'
 require_relative 'error_handler'
 
 module M3Uzi2
+  # Reader an M3U8 file, parsing each line and placing the resulting tag
+  # into an M3U8File
   class M3U8Reader
     include ErrorHandler
 
@@ -15,7 +17,7 @@ module M3Uzi2
     # ==== Params
     # +m3u8_file+ :: A M3U8File - required unless you are passing an instance
     #                to the process method...which is protected...whoops
-    # +parser+ :: if no parser is provided then a M3U8TagParser will be created.
+    # +parser+ :: if no parser is provided a M3U8TagParser will be created.
     #
     # ==== Example
     #
@@ -40,14 +42,6 @@ module M3Uzi2
     end
 
     # ==== Description
-    # Perform the read operation on the file that was specified when
-    # initializing the class. The tags will be read into the M3U8File passed
-    # in the initializer.
-    def read(stream = nil)
-      process (stream.nil? ? read_file(@m3u8_file.pathname) : read_io_stream(stream)),
-              @m3u8_file
-    end
-
     def read_file(pathname)
       handle_error('No M3U8File specified', true) if @m3u8_file.nil?
       unless File.exist?(pathname)
@@ -60,8 +54,23 @@ module M3Uzi2
       end
     end
 
+    # ==== Description
     def read_io_stream(stream)
       stream.readlines.map { | line | line.chomp }
+    end
+
+    # ==== Description
+    # Perform the read operation on the file that was specified when
+    # initializing the class. The tags will be read into the M3U8File passed
+    # in the initializer.
+    def read(stream = nil)
+      if stream.nil?
+        lines read_file(@m3u8_file.pathname)
+      else
+        read_io_stream(stream)
+      end
+
+      process(lines, @m3u8_file)
     end
 
     protected
@@ -84,8 +93,9 @@ module M3Uzi2
     def validate_line(line, line_num)
       # See 3.2 : An Attribute List is a comma-separated list of
       # attribute/value pairs with no whitespace.
-      check_line(line, line_num, ', ', ',', 'Commas must NOT be followed by space.')
-      check_line(line, line_num, ',,', ',', 'Empty attribute ",,". (fixing)')
+      check_line(line, line_num, ', ', ',',
+                 'Commas must NOT be followed by space')
+      check_line(line, line_num, ',,', ',', 'Empty attribute ",,"')
     end
 
     private
@@ -106,32 +116,5 @@ module M3Uzi2
     def valid_header?(line)
       line == '#EXTM3U' ? true : false
     end
-  end
-end
-
-require_relative 'types/media_segment'
-def test_reader(file)
-  puts "Testing #{file}"
-
-  m3u8_file = M3Uzi2::M3U8File.new(file)
-  m3uzi2 = M3Uzi2::M3U8Reader.new(m3u8_file)
-  m3uzi2.read
-
-  puts "*****VERSION********"
-  puts m3u8_file.version
-  puts "*****TYPE********"
-  puts m3u8_file.type
-  puts "****VALID*********"
-  puts m3u8_file.valid?
-  puts "******************"
-
-  m3u8_file.dump
-end
-
-if $PROGRAM_NAME == __FILE__
- # $plt = M3Uzi2::PlaylistSpecification.new
-
-  Dir['../../spec/samples/*'].each do | file |
-    test_reader(file)
   end
 end

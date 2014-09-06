@@ -1,4 +1,5 @@
 require_relative 'tag_specification'
+require_relative '../error_handler'
 
 module M3Uzi2
   # Base methods for Playlist & Header specification classes.
@@ -59,7 +60,7 @@ module M3Uzi2
     protected
 
     def warning(message)
-      puts "WARNING! #{message}"
+      handle_error "WARNING! #{message}"
       false
     end
   end

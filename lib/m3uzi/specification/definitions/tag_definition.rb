@@ -129,10 +129,10 @@ module M3Uzi2
       end
     end
 
-    def integer_value_constraint
+    def integer_value_constraint(range = nil)
       @_ts << TagConstraint.new("Invalid Integer Value") do | tag |
         begin
-          true if Integer(tag.value)
+          true if Integer(tag.value) && (range ? range.include?(tag.value) : true)
         rescue
           false
         end

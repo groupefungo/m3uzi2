@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 group :test do
-  gem 'minitest'
-  gem 'shoulda'
+  gem 'pry-byebug'
+  gem 'guard'
 end
 

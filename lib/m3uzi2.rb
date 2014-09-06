@@ -46,6 +46,7 @@ end
 if $PROGRAM_NAME == __FILE__
   m3u = M3Uzi2::M3Uzi2.new('../spec/samples/2014-08-18-122730.M3U8')
   m3u.load
+  puts m3u.valid?
   m3u.save('../spec/samples/2014-08-18-122730.COPY.M3U8')
 end
 

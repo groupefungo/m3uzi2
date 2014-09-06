@@ -17,17 +17,10 @@ module M3Uzi2
       self.specification.valid_tag?(tag)
     end
 
-    # provides a quick way to add a basic set of headers.
-    def create_default_headers
-
-    end
-
     protected
 
     def add(tag)
-      if super(tag).nil?
-        fail 'Only M3Uzi2::Tags may be added to headers'
-      end
+      fail 'Only M3Uzi2::Tags may be added to headers' if super(tag).nil?
     end
   end
 end

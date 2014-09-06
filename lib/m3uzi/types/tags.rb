@@ -4,6 +4,8 @@ require_relative 'attributes'
 module M3Uzi2
   class Tags < Hash; end
 
+  # Represents an instance of a m3u8 tag which can be validated against a
+  # specification.
   class Tag
     include ErrorHandler
 
@@ -14,9 +16,12 @@ module M3Uzi2
 
     attr_accessor :specification
 
-    def initialize(name, value = nil)
+    # Note that if you are creating a tag manually and want to validate it,
+    # you MUST either pass specification in or set it before calling valid?.
+    def initialize(name, value = nil, specification: nil)
       @name = name
       @value = value
+      @specification = specification
 
       @attributes = Attributes.new
     end
@@ -38,16 +43,18 @@ module M3Uzi2
     end
 
     def add_attribute(name, value)
-      fail "Cannot add attributes to a #{self.class.name} that has a value!" if @value
+      fail "Cannot add attributes to a #{self.class.name} "\
+           'that has a value!' if @value
       @attributes[name] = M3Uzi2::Attribute.new(self, name, value)
     end
 
     def valid?
-      @specification.check_tag(self) && @attributes.all? { | k, v | v.valid? }
+      @specification.check_tag(self) && @attributes.all? { | _k, v | v.valid? }
     end
 
     def to_s
-      "##{@name}#{@value || @attributes.size > 0 ? ':' : ''}#{@attributes}#{@value}"
+      "##{@name}#{@value || @attributes.size > 0 ? ':' : ''}"\
+      "#{@attributes}#{@value}"
     end
 
     def version
@@ -63,7 +70,8 @@ module M3Uzi2
     end
 
     def value=(val)
-      fail "Cannot set a value on a #{self.class.name} that has attributes!" if @attributes.size > 0
+      fail "Cannot set a value on a #{self.class.name} "\
+           'that has attributes!' if @attributes.size > 0
       @value = val
     end
 

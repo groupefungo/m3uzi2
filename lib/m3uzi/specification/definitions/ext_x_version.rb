@@ -34,7 +34,7 @@ module M3Uzi2
     end
 
     def define_constraints
-      integer_value_constraint
+      integer_value_constraint((2..6))
     end
   end
 end

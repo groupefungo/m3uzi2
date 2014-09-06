@@ -1,5 +1,4 @@
 module M3Uzi2
-
   class ConstraintError
     attr_reader :message,
                 :location,
@@ -12,13 +11,9 @@ module M3Uzi2
 
     def to_s
       message = "#{@message} "
-#      message << "(value='#{val}')" if val
-#      message << "\n#{@location[0]}:#{@location[1]}"
     end
   end
 
-
-  # TODO: Seperate AttributeConstraints and TagConstraints?
   class Constraint
     attr_reader :error
 
@@ -34,22 +29,22 @@ module M3Uzi2
 
   class AttributeConstraint < Constraint
     def handle_error(attr)
-          err_msg = "WARNING!! " \
-            "#{attr.kind_of?(Attribute) ? attr.parent_tag.name + '#' : ''}"\
-            "#{attr.name} "\
-            "Failed Against Constraint With Error: "\
-            "#{error} (VALUE=#{attr.value})"
-          puts err_msg
+      err_msg = "WARNING!! " \
+        "#{attr.kind_of?(Attribute) ? attr.parent_tag.name + '#' : ''}"\
+        "#{attr.name} "\
+        "Failed Against Constraint With Error: "\
+        "#{error} (VALUE=#{attr.value})"
+      puts err_msg
     end
   end
 
   class TagConstraint < Constraint
     def handle_error(tag)
-          err_msg = "WARNING!! " \
-            "#{tag.name} "\
-            "Failed Against Constraint With Error: "\
-            "#{error} (VALUE=#{tag.value})"
-          puts err_msg
+      err_msg = "WARNING!! " \
+        "#{tag.name} "\
+        "Failed Against Constraint With Error: "\
+        "#{error} (VALUE=#{tag.value})"
+      puts err_msg
     end
   end
 

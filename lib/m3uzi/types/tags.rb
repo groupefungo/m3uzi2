@@ -4,20 +4,23 @@ require_relative 'attributes'
 module M3Uzi2
   class Tags < Hash; end
 
-  # Represents an instance of a m3u8 tag which can be validated against a
-  # specification.
+  # ==== Description
+  # Represents an instance of a m3u8 tag which can be validated
+  # against a specification.
   class Tag
     include ErrorHandler
 
-    # FULL NAME INCLUDING THE EXT-X
-    attr_reader :name,
+    
+    attr_reader :name,		# FULL NAME INCLUDING THE EXT-X
                 :value,
                 :attributes
 
     attr_accessor :specification
 
-    # Note that if you are creating a tag manually and want to validate it,
-    # you MUST either pass specification in or set it before calling valid?.
+    # ==== Description
+    # Note that if you are creating a tag manually and want to
+    # validate it, you MUST either pass specification in or set it
+    # before calling valid?.
     def initialize(name, value = nil, specification: nil)
       @name = name
       @value = value
@@ -26,6 +29,17 @@ module M3Uzi2
       @attributes = Attributes.new
     end
 
+    # Set the Tags value. Note that attempting to set a value on a tag
+    # that has attributes will raise StandardError
+    def value=(val)
+      fail "Cannot set a value on a #{self.class.name} "\
+           'that has attributes!' if @attributes.size > 0
+      @value = val
+    end
+
+    # ==== Description
+    # The passed +attributes+ parameter should be a string containing
+    # one or more comma seperated attribute=value pairs.
     def add_attributes(attributes)
       return handle_stream_inf(attributes) if name == 'EXT-X-I-FRAME-STREAM-INF'
 
@@ -34,20 +48,28 @@ module M3Uzi2
       end
     end
 
+    # Convenience method to access attributes via [attibute_name] 
+    # semantics.
     def [](key)
       @attributes[key]
     end
 
+    # Convenience method to access attributes via [attibute_name]=val
+    # semantics, and allow an existing attributes value to be changed.
     def []=(key, value)
+      fail_if_value_exculudes_attribute
       @attributes[key] = value
     end
 
+    # Create a new attribute from a name, value pair
+    # Note that attempting to add an attribute on a tag
+    # that has a value will raise StandardError
     def add_attribute(name, value)
-      fail "Cannot add attributes to a #{self.class.name} "\
-           'that has a value!' if @value
-      @attributes[name] = M3Uzi2::Attribute.new(self, name, value)
+      fail_if_value_exculudes_attribute
+      @attributes[name] = Attribute.new(self, name, value)
     end
 
+    # Returns true if and only if the Tag AND all attributes are valid
     def valid?
       @specification.check_tag(self) && @attributes.all? { | _k, v | v.valid? }
     end
@@ -69,13 +91,12 @@ module M3Uzi2
       @specification[@name].valid_occurance_range
     end
 
-    def value=(val)
-      fail "Cannot set a value on a #{self.class.name} "\
-           'that has attributes!' if @attributes.size > 0
-      @value = val
-    end
-
     private
+
+    def fail_if_value_exculudes_attribute
+      fail "Cannot add attributes to a #{self.class.name} "\
+           'that has a value!' if @value
+    end
 
     # edge case applicable to I-FRAME-STREAM-INF tag only:
     #

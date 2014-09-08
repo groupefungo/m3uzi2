@@ -10,7 +10,6 @@ module M3Uzi2
   class Tag
     include ErrorHandler
 
-    
     attr_reader :name,		# FULL NAME INCLUDING THE EXT-X
                 :value,
                 :attributes
@@ -22,11 +21,12 @@ module M3Uzi2
     # validate it, you MUST either pass specification in or set it
     # before calling valid?.
     def initialize(name, value = nil, specification: nil)
+      fail 'Name cannot be nil' if name.nil?
+
       @name = name
       @value = value
-      @specification = specification
-
       @attributes = Attributes.new
+      @specification = specification
     end
 
     # Set the Tags value. Note that attempting to set a value on a tag
@@ -48,7 +48,7 @@ module M3Uzi2
       end
     end
 
-    # Convenience method to access attributes via [attibute_name] 
+    # Convenience method to access attributes via [attibute_name]
     # semantics.
     def [](key)
       @attributes[key]

@@ -1,12 +1,10 @@
-#$LOAD_PATH << File.dirname(__FILE__)
-
 require 'forwardable'
 
 require_relative 'm3uzi/m3u8_reader'
 require_relative 'm3uzi/m3u8_writer'
 require_relative 'm3uzi/m3u8_file'
 
-# A client to support parsing of M3U and M3U8 files, based on zencoder/m3uzi,
+# A client to support M3U and M3U8 files, based on zencoder/m3uzi,
 # with extensive refactorization.
 #
 # Updated to support the latest draft RFC specification:
@@ -49,4 +47,3 @@ if $PROGRAM_NAME == __FILE__
   puts m3u.valid?
   m3u.save('../spec/samples/2014-08-18-122730.COPY.M3U8')
 end
-

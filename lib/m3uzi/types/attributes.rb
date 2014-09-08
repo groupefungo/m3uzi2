@@ -1,9 +1,13 @@
 module M3Uzi2
+  # Simple container for the attributes.
   class Attributes < Hash
     def to_s
-      self.map { | k, v | v.to_s }.join(',')
+      map { | _k, v | v.to_s }.join(',')
     end
 
+    # ==== Description
+    # Takes a string of 1 or more comma seperated attribute=value pairs
+    # and yields them to the given block.
     def self.parse(str)
       err_msg = 'Invalid Attribute/Value Pair: '
       if str.index(',').nil?
@@ -18,15 +22,18 @@ module M3Uzi2
     end
   end
 
+  # An attribute of a Tag which is a key/value pair seperated by an equals sign
+  # e.g. BANDWIDTH=901122
   class Attribute
-    attr_reader :name,
-                :value,
-                :parent_tag
+    attr_reader :parent_tag,
+                :name
+
+    attr_accessor :value
 
     def initialize(parent_tag, name, value = nil)
+      @parent_tag = parent_tag
       @name = name
       @value = value
-      @parent_tag = parent_tag
     end
 
     def parent_attribute(attr_name)

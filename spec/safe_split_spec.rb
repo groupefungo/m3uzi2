@@ -1,16 +1,18 @@
 require_relative '../lib/m3uzi/safe_split'
 
+# Yes, I know, very busy tests.
+
 include SafeSplit
 
-describe :accumulate do
+describe :restore_split do
   it 'creates an array, ignoring quotes' do
-    expect(accumulate('hello=world', '=')[0]).to eq 'hello'
-    expect(accumulate('hello=world', '=')[1]).to eq 'world'
-    expect(accumulate('hello=world,dog=cat', ',')[0]).to eq 'hello=world'
-    expect(accumulate('hello=world,dog=cat', ',')[1]).to eq 'dog=cat'
-    expect(accumulate('"hello=world"', '=')[0]).to eq '"hello=world"'
-    expect(accumulate('"hello=world","dog=cat"', ',')[0]).to eq '"hello=world"'
-    expect(accumulate('"hello=world","dog=cat"', ',')[1]).to eq '"dog=cat"'
+    expect(restore_split('hello=world', '=')[0]).to eq 'hello'
+    expect(restore_split('hello=world', '=')[1]).to eq 'world'
+    expect(restore_split('hello=world,dog=cat', ',')[0]).to eq 'hello=world'
+    expect(restore_split('hello=world,dog=cat', ',')[1]).to eq 'dog=cat'
+    expect(restore_split('"hello=world"', '=')[0]).to eq '"hello=world"'
+    expect(restore_split('"hello=world","dog=cat"', ',')[0]).to eq '"hello=world"'
+    expect(restore_split('"hello=world","dog=cat"', ',')[1]).to eq '"dog=cat"'
   end
 end
 
@@ -74,6 +76,4 @@ describe :safe_split do
     expect(result[2][0]).to eq 'CODECS'
     expect(result[2][1]).to eq '"first,second,etc"'
   end
-
 end
-

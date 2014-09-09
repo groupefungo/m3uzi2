@@ -77,7 +77,7 @@ describe M3Uzi2::Tag do
       expect(tag.attributes['METHOD']).to be_kind_of Attribute
       expect(tag.attributes['METHOD'].value).to eq 'AES-128'
       expect(tag.attributes['URI']).to be_kind_of Attribute
-      expect(tag.attributes['URI'].value).to eq 'https://priv.example.com/key.php?r=52'
+      expect(tag.attributes['URI'].value).to eq '"https://priv.example.com/key.php?r=52"'
 
     end
 

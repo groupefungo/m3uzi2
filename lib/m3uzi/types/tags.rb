@@ -41,7 +41,7 @@ module M3Uzi2
     # The passed +attributes+ parameter should be a string containing
     # one or more comma seperated attribute=value pairs.
     def add_attributes(attributes)
-      return handle_stream_inf(attributes) if name == 'EXT-X-I-FRAME-STREAM-INF'
+#      return handle_stream_inf(attributes) if name == 'EXT-X-I-FRAME-STREAM-INF'
 
       Attributes.parse(attributes) do | n, v |
         add_attribute(n, v)
@@ -104,22 +104,22 @@ module M3Uzi2
     #
     # splitting via comma also splits the attribute value this leading to an
     # invalid attribute
-    def handle_stream_inf(attributes)
-      ec = ''
-      attributes.split(',').each do | attr |
-        if attr.count('"') == 1
-          ec << attr << ','
-          next unless ec.count('"') == 2
-        end
+    #def handle_stream_inf(attributes)
+      #ec = ''
+      #attributes.split(',').each do | attr |
+        #if attr.count('"') == 1
+          #ec << attr << ','
+          #next unless ec.count('"') == 2
+        #end
 
-        add_attribute(*attr.split('=')) if ec == ''
+        #add_attribute(*attr.split('=')) if ec == ''
 
-        if ec.count('"') == 2
-          ec[-1] = ''
-          add_attribute(*ec.split('='))
-          ec = ''
-        end
-      end
-    end
+        #if ec.count('"') == 2
+          #ec[-1] = ''
+          #add_attribute(*ec.split('='))
+          #ec = ''
+        #end
+      #end
+    #end
   end
 end

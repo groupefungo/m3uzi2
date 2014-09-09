@@ -1,6 +1,10 @@
+require_relative '../safe_split'
+
 module M3Uzi2
   # Simple container for the attributes.
   class Attributes < Hash
+    include SafeSplit
+
     def to_s
       map { | _k, v | v.to_s }.join(',')
     end
@@ -10,33 +14,11 @@ module M3Uzi2
     # and yields them to the given block.
     def self.parse(str)
       err_msg = 'Invalid Attribute/Value Pair: '
-      if str.index(',').nil?                      # single attribute
-        fail err_msg << str unless str.index('=')
-
-        yield str.split('=') if block_given?
-      else                                        # multiple attributes
-        str.split(',').each do | attr |
-          fail err_msg << attr unless attr.index('=')
-
-          yield attr.split('=') if block_given?
-        end
+      safe_split(str).each do | arr |
+        fail err_msg << str if arr.size < 2
+        yield arr if block_given?
       end
     end
-
-    # ==== Description
-    # We have some split 'edge cases' e.g.
-    #
-    #   METHOD=NONE                                  - single value
-    #   CODECS="first,second,etc"                    - splitting by ',' fails
-    #   URI="https://priv.example.com/key.php?r=52"  - splittng by '=' fails
-    #
-    #   challenge - 1 method to split them all
-    #
-    def self.safe_split(str, chr, &block)
-      # does the value contain a " or ' ... we might have multiple
-
-    end
-
   end
 
   # An attribute of a Tag which is a key/value pair seperated by an equals sign

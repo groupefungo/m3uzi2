@@ -1,6 +1,9 @@
 M3Uzi2
 ======
 
+[![Code Climate](https://codeclimate.com/github/os6sense/m3uzi2/badges/gpa.svg)](https://codeclimate.com/github/os6sense/m3uzi2)
+[![Build Status](https://travis-ci.org/os6sense/m3uzi2.svg?branch=master)](https://travis-ci.org/os6sense/m3uzi2)
+
 Unfinished, incomplete tests, not a version 1.0.0 despite what the version says!
 
 This started life as a simple bug fix of M3uzi but ended up becoming such a

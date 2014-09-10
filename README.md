@@ -3,6 +3,7 @@ M3Uzi2
 
 [![Code Climate](https://codeclimate.com/github/os6sense/m3uzi2/badges/gpa.svg)](https://codeclimate.com/github/os6sense/m3uzi2)
 [![Build Status](https://travis-ci.org/os6sense/m3uzi2.svg?branch=master)](https://travis-ci.org/os6sense/m3uzi2)
+[![Test Coverage](https://codeclimate.com/github/os6sense/m3uzi2/badges/coverage.svg)](https://codeclimate.com/github/os6sense/m3uzi2)
 
 Unfinished, incomplete tests, not a version 1.0.0 despite what the version says!
 

@@ -1,3 +1,4 @@
+require_relative 'spec_helper'
 require_relative '../lib/m3uzi/specification/m3u8_specification'
 require_relative '../lib/m3uzi/types/tags'
 

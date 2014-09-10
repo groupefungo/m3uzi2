@@ -1,3 +1,4 @@
+require_relative 'spec_helper'
 require_relative '../lib/m3uzi/m3u8_file'
 
 include M3Uzi2

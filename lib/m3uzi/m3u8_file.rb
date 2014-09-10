@@ -8,8 +8,6 @@ require_relative 'm3u8_playlist'
 require_relative 'm3u8_headers'
 require_relative 'error_handler'
 
-require 'pry-byebug'
-
 module M3Uzi2
   # A representation/container for an M3U or M3U8 File
   class M3U8File

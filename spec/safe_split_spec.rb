@@ -1,3 +1,5 @@
+require_relative 'spec_helper'
+
 require_relative '../lib/m3uzi/safe_split'
 
 # Yes, I know, very busy tests.

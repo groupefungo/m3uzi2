@@ -210,7 +210,7 @@ describe M3Uzi2::M3U8File do
     end
 
     it 'creates a VERSION tag' do
-      tag = M3U8File.create_tag('EXT-X-VERSION', nil, 2)
+      tag = M3U8File.create_tag('EXT-X-VERSION', nil, '2')
       basic_tag_expectations(tag, 2)
     end
 

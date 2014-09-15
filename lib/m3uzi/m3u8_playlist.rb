@@ -22,6 +22,10 @@ module M3Uzi2
       MediaSegment.new(path)
     end
 
+    def final_media_segment?
+      !['EXT-X-ENDLIST'].empty?
+    end
+
     protected
 
     def add(tag)

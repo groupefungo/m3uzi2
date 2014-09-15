@@ -65,9 +65,9 @@ module M3Uzi2
     # in the initializer.
     def read(stream = nil)
       if stream.nil?
-        lines read_file(@m3u8_file.pathname)
+        lines = read_file(@m3u8_file.pathname)
       else
-        read_io_stream(stream)
+        lines = read_io_stream(stream)
       end
 
       process(lines, @m3u8_file)

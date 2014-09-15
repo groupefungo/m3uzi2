@@ -20,8 +20,8 @@ module M3Uzi2
 
     attr_accessor :pathname
 
-    def_delegator :@playlist, :media_segments,
-                              :final_media_segment?
+    def_delegators :@playlist, :media_segments,
+                               :final_media_segment?
 
     def initialize(pathname = nil)
       @pathname = pathname

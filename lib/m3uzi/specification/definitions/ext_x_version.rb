@@ -34,7 +34,8 @@ module M3Uzi2
     end
 
     def define_constraints
-      integer_value_constraint((2..6))
+      integer_value_constraint
+      restricted_value_constraint(%w(2 3 4 5 6))
     end
   end
 end

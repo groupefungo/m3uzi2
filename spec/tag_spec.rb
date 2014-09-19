@@ -64,6 +64,42 @@ describe M3Uzi2::Tag do
     end
   end
 
+  describe :increment do
+    context 'if the value is a string number' do
+      let(:tag) { Tag.new('EXT-X-MEDIA-SEQUENCE', '0', specification: hspec) }
+      let(:inttag) { Tag.new('EXT-X-MEDIA-SEQUENCE', 0, specification: hspec) }
+
+      it 'works if the value is a numeric (for some reason)' do
+        inttag.increment
+        expect(inttag.value).to eq 1
+      end
+
+      it 'increments a float value by x' do
+        tag.increment(1.0)
+        expect(tag.value).to eq '1.0'
+      end
+
+      it 'increments an integer value by x' do
+        tag.increment
+        expect(tag.value).to eq '1'
+      end
+    end
+
+    let(:strtag) { Tag.new('EXT-X-ALLOW-CACHE', 'YES', specification: hspec) }
+    it 'doesnt change a none number value' do
+        strtag.increment
+        expect(strtag.value).to eq 'YES'
+    end
+  end
+
+  describe :decrement do
+    let(:tag) { Tag.new('EXT-X-MEDIA-SEQUENCE', '1', specification: hspec) }
+    it 'is like increment except it decrements' do
+      tag.decrement
+      expect(tag.value).to eq '0'
+    end
+  end
+
   describe :add_attributes do
     let(:tag) { Tag.new('EXT-X-KEY') }
 

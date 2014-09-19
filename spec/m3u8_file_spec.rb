@@ -5,6 +5,8 @@ include M3Uzi2
 
 # This is a very basic set of tests for the various tags
 describe M3Uzi2::M3U8File do
+  create_sample_data
+
   let(:m3u8_file) { M3U8File.new }
 
   # A set of basic expectations for a valid tag
@@ -80,9 +82,6 @@ describe M3Uzi2::M3U8File do
     it 'returns false otherwise' do
 
     end
-
-
-
   end
 
   describe 'add and <<' do
@@ -93,6 +92,31 @@ describe M3Uzi2::M3U8File do
       expect(m3u8_file['EXT-X-VERSION'].class).to eq Array
       expect(m3u8_file['EXT-X-VERSION'].size).to eq 1
       expect(m3u8_file['EXT-X-VERSION'][0].class).to eq Tag
+    end
+  end
+
+  describe :slide! do
+    it 'updates the playlist to contain only the minimum (in seconds)'\
+       'of media segments' do
+      sample_file.slide!()
+      expect(sample_file.media_segments.size).to be 4
+    end
+
+    context 'when overriding the duration' do
+      it 'can override the duration' do
+        sample_file.slide!(60)
+        expect(sample_file.media_segments.size).to be 6
+      end
+
+      it 'cannot go below the specifications minimum though' do
+        sample_file.slide!(5)
+        expect(sample_file.media_segments.size).to be 4
+      end
+    end
+
+    it 'updates the media sequence value' do
+      sample_file.slide!()
+      expect(sample_file['EXT-X-MEDIA-SEQUENCE'][0].value).to eq '4'
     end
   end
 
@@ -112,13 +136,13 @@ describe M3Uzi2::M3U8File do
 
   describe :[] do
     it 'Returns an array of tags matching tag_name' do
-
+      expect(sample_pl['EXTINF'].size).to eq 8
     end
   end
 
   describe :media_segments do
     it 'Return an array of MediaSegments' do
-
+      expect(sample_pl.media_segments.size).to eq 8
     end
   end
 
@@ -126,18 +150,6 @@ describe M3Uzi2::M3U8File do
     it 'returns nil if we attempt to create a tag with an invalid name' do
       tag = M3U8File.create_tag('EXT-X-INVALID', nil, 1)
       expect(tag).to eq nil
-    end
-  end
-
-  describe :[] do
-    it 'Return an array of tags matching tag_name' do
-
-    end
-  end
-
-  describe :media_segments do
-    it 'Return an array of MediaSegments' do
-
     end
   end
 
@@ -158,7 +170,7 @@ describe M3Uzi2::M3U8File do
     end
 
     it 'creates a TARGETDURATION tag' do
-      tag = M3U8File.create_tag('EXT-X-TARGETDURATION', nil, 10)
+      tag = M3U8File.create_tag('EXT-X-TARGETDURATION', nil, '10')
       basic_tag_expectations(tag, 1)
     end
 
@@ -264,7 +276,7 @@ describe M3Uzi2::M3U8File do
     end
 
     it 'creates a DISCONTINUITY-SEQUENCE tag' do
-      tag = M3U8File.create_tag('EXT-X-DISCONTINUITY-SEQUENCE', nil, 10)
+      tag = M3U8File.create_tag('EXT-X-DISCONTINUITY-SEQUENCE', nil, '10')
       basic_tag_expectations(tag, 6)
     end
 

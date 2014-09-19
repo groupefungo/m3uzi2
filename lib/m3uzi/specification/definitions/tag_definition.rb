@@ -29,7 +29,6 @@ module M3Uzi2
     end
   end
 
-
   class TagDefinition
     attr_reader :name,
                 :min_version,
@@ -112,7 +111,6 @@ module M3Uzi2
     rescue
       false
     end
-
   end
 
   ###########################################################################
@@ -124,15 +122,15 @@ module M3Uzi2
   # Value Tags have a value and no attributes
   class ValueTag < TagDefinition
     def restricted_value_constraint(arr)
-      @_ts << TagConstraint.new("Invalid Restricted Value") do | tag |
+      @_ts << TagConstraint.new('Invalid Restricted Value') do | tag |
         arr.include?(tag.value)
       end
     end
 
     def integer_value_constraint
-      @_ts << TagConstraint.new("Invalid Integer Value") do | tag |
+      @_ts << TagConstraint.new('Invalid Integer Value') do | tag |
         begin
-          true if Integer(tag.value)
+          true if Integer(tag.value) && !tag.value.to_s.include?('.')
         rescue
           false
         end
@@ -140,17 +138,24 @@ module M3Uzi2
     end
 
     def byte_range_constraint
-      @_ts << TagConstraint.new("Invalid Byte Range Value") do | tag |
+      @_ts << TagConstraint.new('Invalid Byte Range Value') do | tag |
         _all_int?(_split_val(tag.value.to_s, '@'))
       end
     end
 
     def float_value_constraint
+      @_ts << TagConstraint.new('Invalid Float Value') do | tag |
+        begin
+          true if Float(tag.value) && tag.value.to_s.include?('.')
+        rescue
+          false
+        end
+      end
     end
 
     def date_value_constraint
       require 'time'
-      @_ts << TagConstraint.new("Invalid Date Value") do | tag |
+      @_ts << TagConstraint.new('Invalid Date Value') do | tag |
         begin
           Time.parse(tag.value).iso8601
           true
@@ -180,10 +185,9 @@ module M3Uzi2
   ###########################################################################
   # Attribute Tags ONLY have attributes and no value
   class AttributeTag < TagDefinition
-
     def decimal_resolution_value_constraint(attr_name)
       @_ts[attr_name] << AttributeConstraint.new(
-        "Value must be of the form <integer>x<integer>") do | tag |
+        'Value must be of the form <integer>x<integer>') do | tag |
         _all_int?(_split_val(tag.value.to_s, 'x'))
       end
     end

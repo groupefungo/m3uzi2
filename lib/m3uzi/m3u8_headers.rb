@@ -14,7 +14,13 @@ module M3Uzi2
     end
 
     def self.valid_header?(tag)
-      self.specification.valid_tag?(tag)
+      specification.valid_tag?(tag)
+    end
+
+    def increment_media_sequence(val = 1)
+      self['EXT-X-MEDIA-SEQUENCE'][0].tap do | v |
+        v ?  v.increment(val) : nil
+      end
     end
 
     protected

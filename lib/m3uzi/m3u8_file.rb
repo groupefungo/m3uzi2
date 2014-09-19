@@ -21,7 +21,8 @@ module M3Uzi2
     attr_accessor :pathname
 
     def_delegators :@playlist, :media_segments,
-                               :final_media_segment?
+                               :final_media_segment?,
+                               :total_duration
 
     def initialize(pathname = nil)
       @pathname = pathname
@@ -51,6 +52,30 @@ module M3Uzi2
 
       handle_error "UNKNOWN #{tag} :: #{attributes} :: #{value}"
       nil
+    end
+
+    # ==== Description
+    # Helper method. Creates a tag which is not added to the file.
+    def self.create_header_tag(tag, attributes, value)
+      return M3U8Headers.create_tag(tag, attributes, value).tap do | t |
+        t.specification = M3U8Headers.specification
+        t.valid?
+      end
+    end
+
+    # ==== Description
+    # Helper method. Creates a mediasegment which is not added to the file.
+    def self.create_media_segment(path)
+      return M3U8Playlist.create_media_segment(path)
+    end
+
+    # ==== Description
+    # Helper method. Creates a playlist tag which is not added to the file.
+    def self.create_playlist_tag(tag, attributes, value)
+      return M3U8Playlist.create_tag(tag, attributes, value).tap do | t |
+        t.specification = M3U8Playlist.specification
+        t.valid?
+      end
     end
 
     def type(nil_on_mismatch: false)
@@ -139,8 +164,43 @@ module M3Uzi2
       @playlist.each { | h | dump_tag(h) }
     end
 
+    # ==== Description
+    # Given a path+filename of a media segment, that segment will be deleted
+    # AND all applicable tags
+    def delete_media_segment(filename)
+      @headers.increment_media_sequence if @playlist
+        .delete_media_segment(filename)
+    end
+
+    def slide!(duration = nil)
+      # we remove all except sufficient files so that the duration
+      # is at least 3 times greater than the target duration
+      media_segments.each do | ms |
+        return if (@playlist.total_duration - ms.duration) \
+                              < minimum_duration(duration)
+        delete_media_segment(ms.path)
+      end
+    end
+
+    # Calculates the minimum duration in seconds that the playlist can be
+    # mixed feelings on this being public ...
+    def minimum_duration(duration = nil)
+      if @headers['EXT-X-TARGETDURATION'].empty?
+        return duration if duration
+        return 999_999_999 # TODO: Infinity or Zero?
+      end
+
+      # see
+      # http://tools.ietf.org/html/draft-pantos-http-live-streaming-13
+      # #section-6.2.2
+      spec_min = Integer(@headers['EXT-X-TARGETDURATION'][0].value) * 3
+      return duration if duration && duration > spec_min
+      spec_min
+    end
+
     private
 
+    # used by the dump method
     def dump_tag(tag)
       puts "#{tag.class} -- comp: #{tag.playlist_compatability} "\
            "version:#{tag.version} -- valid?#{tag.valid?} :: #{tag}"
@@ -154,30 +214,6 @@ module M3Uzi2
       return @headers if M3U8Headers.valid_header?(tag.name)
 
       fail "UNKNOWN Tag :: #{tag} "
-    end
-
-    # ==== Description
-    # Helper method. Creates a tag which is not added to the file.
-    def self.create_header_tag(tag, attributes, value)
-      return M3U8Headers.create_tag(tag, attributes, value).tap do | t |
-        t.specification = M3U8Headers.specification
-        t.valid?
-      end
-    end
-
-    # ==== Description
-    # Helper method. Creates a mediasegment which is not added to the file.
-    def self.create_media_segment(path)
-      return M3U8Playlist.create_media_segment(path)
-    end
-
-    # ==== Description
-    # Helper method. Creates a playlist tag which is not added to the file.
-    def self.create_playlist_tag(tag, attributes, value)
-      return M3U8Playlist.create_tag(tag, attributes, value).tap do | t |
-        t.specification = M3U8Playlist.specification
-        t.valid?
-      end
     end
   end
 end

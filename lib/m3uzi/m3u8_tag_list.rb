@@ -15,17 +15,13 @@ module M3Uzi2
       @_lines.select { | tag | tag.kind_of?(Tag) && tag.name == key }
     end
 
-    def media_segments
-      @_lines.select { | tag | tag.kind_of?(MediaSegment) }
-    end
-
     def <<(tag)
       add(tag)
     end
 
     def each
       return enum_for(:each) unless block_given?
-      @_lines.each { |e| yield(e) }
+      @_lines.each { | e | yield(e) }
     end
 
     def add(tag)
@@ -39,6 +35,11 @@ module M3Uzi2
 
       return @_lines << tag
     end
+
+    def item_at(index)
+      @_lines[index]
+    end
+
 
     def to_s
       @_lines.to_s

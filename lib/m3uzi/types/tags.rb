@@ -11,7 +11,7 @@ module M3Uzi2
     include ErrorHandler
 
     attr_reader :name,		# FULL NAME INCLUDING THE EXT-X
-                :value,
+                #:value,
                 :attributes
 
     attr_accessor :specification
@@ -29,6 +29,10 @@ module M3Uzi2
       @specification = specification
     end
 
+    def value
+      @value
+    end
+
     # Set the Tags value. Note that attempting to set a value on a tag
     # that has attributes will raise StandardError
     def value=(val)
@@ -37,19 +41,27 @@ module M3Uzi2
       @value = val
     end
 
+    # if our value can be parsed to a numeric then incremnt by inc
+    def increment(v = 1)
+      if @value.kind_of?(String)
+        @value = (to_f_or_i(@value) + v).to_s if to_f_or_i(@value)
+      else
+        @value += v
+      end
+    end
+
+    def decrement(v = 1)
+      increment(-v)
+    end
+
     # ==== Description
     # The passed +attributes+ parameter should be a string containing
     # one or more comma seperated attribute=value pairs.
     def add_attributes(attributes)
-#      return handle_stream_inf(attributes) if name == 'EXT-X-I-FRAME-STREAM-INF'
-
-      Attributes.parse(attributes) do | n, v |
-        add_attribute(n, v)
-      end
+      Attributes.parse(attributes) { | n, v | add_attribute(n, v) }
     end
 
-    # Convenience method to access attributes via [attibute_name]
-    # semantics.
+    # Convenience method to access attributes via [attibute_name] # semantics.
     def [](key)
       @attributes[key]
     end
@@ -98,28 +110,10 @@ module M3Uzi2
            'that has a value!' if @value
     end
 
-    # edge case applicable to I-FRAME-STREAM-INF tag only:
-    #
-    #    CODECS="first,second,etc"
-    #
-    # splitting via comma also splits the attribute value this leading to an
-    # invalid attribute
-    #def handle_stream_inf(attributes)
-      #ec = ''
-      #attributes.split(',').each do | attr |
-        #if attr.count('"') == 1
-          #ec << attr << ','
-          #next unless ec.count('"') == 2
-        #end
-
-        #add_attribute(*attr.split('=')) if ec == ''
-
-        #if ec.count('"') == 2
-          #ec[-1] = ''
-          #add_attribute(*ec.split('='))
-          #ec = ''
-        #end
-      #end
-    #end
+    def to_f_or_i(v)
+      ((float = Float(v)) && (float % 1.0 == 0) ? float.to_i : float)
+    rescue
+      nil
+    end
   end
 end

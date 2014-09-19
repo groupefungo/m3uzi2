@@ -17,7 +17,8 @@ module M3Uzi2
     def_delegators :@m3u8_file, :headers, :playlist, :media_segments,
                                 :pathname, :type, :[], :<<, :add,
                                 :create_and_add, :to_s, :version,
-                                :valid?, :dump, :final_media_segment?
+                                :valid?, :dump, :final_media_segment?,
+                                :slide
 
     def_delegators :@m3u8_reader, :read_method, :read_method=, :read,
                                   :read_file, :read_io_stream

@@ -104,12 +104,12 @@ describe M3Uzi2::M3U8File do
 
     context 'when overriding the duration' do
       it 'can override the duration' do
-        sample_file.slide!(60)
+        sample_file.slide!(duration: 60)
         expect(sample_file.media_segments.size).to be 6
       end
 
       it 'cannot go below the specifications minimum though' do
-        sample_file.slide!(5)
+        sample_file.slide!(duration: 5)
         expect(sample_file.media_segments.size).to be 4
       end
     end

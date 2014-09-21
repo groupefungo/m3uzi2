@@ -40,7 +40,6 @@ module M3Uzi2
       @_lines[index]
     end
 
-
     def to_s
       @_lines.to_s
     end

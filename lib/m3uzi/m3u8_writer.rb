@@ -31,9 +31,10 @@ module M3Uzi2
       end
     end
 
-    def write_io_stream(stream)
+    def write_io_stream(stream, rewind: true)
       write_headers(stream, @m3u8_file.headers)
       write_playlist(stream, @m3u8_file.playlist)
+      stream.rewind if rewind
     end
 
     private

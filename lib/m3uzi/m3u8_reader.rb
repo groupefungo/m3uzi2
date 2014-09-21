@@ -38,7 +38,7 @@ module M3Uzi2
     # +val+ :: MUST be either :flock or :normal. :flock will set the file
     # to be opened exclusively locked(LOCK_EX).
     def read_method=(val)
-      @read_method = val if %w(:flock :normal).include(val)
+      @read_method = val if %w(:flock :normal).include?(val)
     end
 
     # ==== Description

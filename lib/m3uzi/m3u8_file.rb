@@ -118,7 +118,11 @@ module M3Uzi2
     # Helper method which both creates a tag and adds it. Tag values must
     # correspond to those for a valid Header, Playlist or MediaSegment
     def create_and_add(tag, attributes, value)
-      add(self.class.create_tag(tag, attributes, value))
+      self.class.create_tag(tag, attributes, value).tap do | tag |
+        tag.playlist = @playlist if tag.kind_of? MediaSegment
+        add(tag)
+      end
+
     end
 
     # ==== Description
@@ -155,7 +159,7 @@ module M3Uzi2
     def valid?
       @headers.all? { | h | h.valid? } &&
         @playlist.all? { | p | p.valid? } &&
-        version(true) &&
+        version(nil_on_mismatch: true) &&
         PlaylistCompatability.check(@headers, @playlist)
     end
 
@@ -172,13 +176,26 @@ module M3Uzi2
         .delete_media_segment(filename)
     end
 
-    def slide!(duration = nil)
+    # +uploaded+ :: Named parameter. An optional list of files which have been
+    # uploaded to the server. If provided then a warning will be given if the
+    # slide window does not contain these files.
+    # +duration:+ :: Named parameter. The  minimum duration for the slide
+    # window. Note that this MUST be greater than three times the
+    # TARGETDURATION. If less than this then TARGETDURATION * 3 will be used
+    def slide!(uploaded: nil, duration: nil)
       # we remove all except sufficient files so that the duration
       # is at least 3 times greater than the target duration
       media_segments.each do | ms |
         return if (@playlist.total_duration - ms.duration) \
                               < minimum_duration(duration)
         delete_media_segment(ms.path)
+      end
+      return unless uploaded
+
+      media_segment.each do | ms |
+        msg = "WARNING! Media Segment #{ms.path} in slide window has NOT "\
+              'been uploaded. Upload bandwidth insufficient for live stream!'
+        handle_error(msg) unless uploaded.include?(ms.path)
       end
     end
 

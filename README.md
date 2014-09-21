@@ -32,7 +32,7 @@ Add a file to the M3U index:
 
 Get all tag reference objects:
 
-Get an tag values :
+Get a tag value :
 
 Set an individual tag value:
 

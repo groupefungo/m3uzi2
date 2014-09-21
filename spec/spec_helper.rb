@@ -36,7 +36,7 @@ def create_sample_data
 
   let(:sample_file) do
     file = M3U8File.new
-    file.create_and_add('EXT3MU', nil, nil)
+    file.create_and_add('EXTM3U', nil, nil)
     file.create_and_add('EXT-X-VERSION', nil, '3')
     file.create_and_add('EXT-X-TARGETDURATION', nil, '12')
     file.create_and_add('EXT-X-MEDIA-SEQUENCE', nil, '0')

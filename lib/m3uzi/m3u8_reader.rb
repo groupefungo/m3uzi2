@@ -80,7 +80,7 @@ module M3Uzi2
     def process(lines, m3u8_file)
       unless valid_header?(lines[0])
         handle_error(
-          "Invalid Header #{line}. File MUST begin with #EXTM3U", true)
+          "Invalid Header #{lines[0]}. File MUST begin with #EXTM3U", true)
       end
 
       lines.each_with_index do | line, i |

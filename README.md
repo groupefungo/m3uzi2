@@ -19,24 +19,53 @@ major rewrite that there is very little (if any!) of the original m3uzi remainin
 - Handle live streaming.
 
 I'm still working on the client which actually uses this gem hence patches/issues are WELCOME!
+
 Usage
 ------
 
-Read an M3U file:
+There are a few ways to use the main components - the most basic is to include
+M3Uzi2 
 
-Write an M3U file:
+
+Read an M3U8 file:
+
+    m3u8 = M3Uzi2.new('../spec/samples/valid/2014-08-18-122730.M3U8')
+
+Write an M3U8 file:
+    
+    m3u8.save('../spec/samples/valid/2014-08-18-122730.COPY.M3U8')
+
+Write to a stream:
+
+  m3u8.write_io_stream(stream = StringIO.new)
 
 Get a list of media segments:
 
-Add a file to the M3U index:
+    m3u8.media_segments
+
+Get a single media segment by name:
+
+    m3u8.media_segment['something.ts']
+
+Add a media segment:
 
 Get all tag reference objects:
 
-Get a tag value :
+Get a tag value:
 
 Set an individual tag value:
 
 Add a tag to the M3U index :
+
+Check if a file is valid:
+
+  m3u8.valid?   
+
+Create a sliding window:
+
+    m3u8.slide!
+
+Note that this is currently a shebang method and the in memory content will be altered.
 
 
 NOTES

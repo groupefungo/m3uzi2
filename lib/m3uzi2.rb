@@ -26,10 +26,12 @@ module M3Uzi2
     def_delegators :@m3u8_writer, :write_method, :write_method=, :write,
                                   :write_file, :write_io_stream
 
-    def initialize(pathname)
+    def initialize(pathname = nil)
       @m3u8_file   = M3U8File.new(pathname)
       @m3u8_reader = M3U8Reader.new(@m3u8_file)
       @m3u8_writer = M3U8Writer.new(@m3u8_file)
+
+      self.load if pathname
     end
 
     def load
@@ -46,7 +48,7 @@ require 'stringio'
 if $PROGRAM_NAME == __FILE__
   m3u8 = M3Uzi2::M3Uzi2.new('../spec/samples/valid/2014-08-18-122730.M3U8')
 
-  m3u8.load
+#  m3u8.load
   puts m3u8.valid?
   m3u8.write_io_stream(stream = StringIO.new)
   puts stream.string

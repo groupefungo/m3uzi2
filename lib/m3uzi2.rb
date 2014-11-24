@@ -31,7 +31,7 @@ module M3Uzi2
       @m3u8_reader = M3U8Reader.new(@m3u8_file)
       @m3u8_writer = M3U8Writer.new(@m3u8_file)
 
-      self.load if pathname
+      load if pathname
     end
 
     def load

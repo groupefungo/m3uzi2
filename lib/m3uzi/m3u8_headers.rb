@@ -2,8 +2,7 @@ require_relative 'm3u8_tag_list'
 require_relative 'specification/header_specification'
 
 module M3Uzi2
-  # Container for the header tags for both master and
-  # media files.
+  # Container for the header tags for both master and media files.
   class M3U8Headers < M3U8TagList
     def initialize
       super()

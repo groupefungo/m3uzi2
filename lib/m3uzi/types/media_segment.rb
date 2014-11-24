@@ -36,7 +36,7 @@ module M3Uzi2
 
     end
 
-    # calculate the duration of the media segment by finding the EXTING
+    # calculate the duration of the media segment by finding the EXTINF
     # tag which preceeds it.
     def duration
       fail 'Cannot infer duration unless #playlist is set' unless @playlist

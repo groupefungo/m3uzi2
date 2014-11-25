@@ -19,6 +19,10 @@ module M3Uzi2
       add(tag)
     end
 
+    def clear!
+      @_lines.clear
+    end
+
     def each
       return enum_for(:each) unless block_given?
       @_lines.each { | e | yield(e) }

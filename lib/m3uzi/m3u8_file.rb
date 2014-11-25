@@ -78,6 +78,11 @@ module M3Uzi2
       end
     end
 
+    def clear!
+      @headers.clear!
+      @playlist.clear!
+    end
+
     def type(nil_on_mismatch: false)
       unless PlaylistCompatability.check(@headers, @playlist)
         handle_error 'File Mixes Incompatable Playlist Tag Types'

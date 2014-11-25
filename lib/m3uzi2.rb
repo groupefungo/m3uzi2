@@ -35,6 +35,7 @@ module M3Uzi2
     end
 
     def load
+      @m3u8_file.clear!
       @m3u8_reader.read
     end
 

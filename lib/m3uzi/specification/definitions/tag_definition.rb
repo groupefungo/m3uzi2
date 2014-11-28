@@ -1,8 +1,6 @@
 require 'uri'
 
 module M3Uzi2
-
-
   # There are severl tags which can be used either in a media playlist or a
   # master playlist, but not both. There are several tags which can be used
   # in both types of play list. This class gives us:

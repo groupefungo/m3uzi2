@@ -40,6 +40,10 @@ module M3Uzi2
       return @_lines << tag
     end
 
+    def index(tag)
+      (i = @_lines.index(tag)) ? i : 0
+    end
+
     def item_at(index)
       @_lines[index]
     end

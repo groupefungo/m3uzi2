@@ -5,7 +5,7 @@ require_relative '../lib/m3uzi/types/attributes'
 include M3Uzi2
 
 describe Attributes do
-  let(:plspec) { M3Uzi2::PlaylistSpecification.new }
+  let(:plspec) { M3Uzi2::MediaPlaylistSpecification.new }
   let(:tag) { M3Uzi2::Tag.new('EXT-X-KEY', specification: plspec) }
 
   it 'is a kind of hash' do

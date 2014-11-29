@@ -9,7 +9,7 @@ describe M3U8Playlist do
   end
 
   it 'has a specification' do
-    expect(M3U8Playlist.specification).to be_kind_of PlaylistSpecification
+    expect(M3U8Playlist.specification).to be_kind_of MediaPlaylistSpecification
   end
 
   it 'returns true or false if a tag name is valid' do

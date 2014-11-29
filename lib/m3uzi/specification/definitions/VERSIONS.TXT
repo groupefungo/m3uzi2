@@ -1,5 +1,9 @@
 # Mainly for my own use at this time
 #
+# VERSION 7
+#
+# 4.3.4.4 EXT-X-SESSION-DATA . . . . . . . . . . . . . . . . . . 25
+#
 # VERSION 6
 #
 # 3.4.12. EXT-X-DISCONTINUITY-SEQUENCE . . . . . . . . . . . . . 16

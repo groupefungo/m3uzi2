@@ -2,15 +2,14 @@ require_relative 'm3u8_tag_list'
 require_relative 'specification/playlist_specification'
 
 module M3Uzi2
-  # 1) We want to preserve the order of entries (hash does this)
-  # 2) Keys may be duplicated - can use compare_by_identity
+  # TODO: Rename to MediaPlaylist
   class M3U8Playlist < M3U8TagList
     def initialize
       super()
     end
 
     def self.specification
-      self._specification ||= PlaylistSpecification.new
+      self._specification ||= MediaPlaylistSpecification.new
     end
 
     def self.valid_tag?(tag)
@@ -38,7 +37,6 @@ module M3Uzi2
       media_segments.reduce(0.0) do | a, e |
         a + e.duration
       end
-
     end
 
     def media_segment(filename)
@@ -72,8 +70,19 @@ module M3Uzi2
     protected
 
     def add(tag)
+
       if super(tag).nil?
-        return @_lines << tag if tag.kind_of? MediaSegment
+        if tag.kind_of?(MediaSegment)
+          # all tags in the media segment should be in the playlist and
+          # all tags in the playlist which apply to the media segment should
+          # point to the media segment AND be in the segment_tags list
+          tag.applicable_tags(self).each do | seg_tag |
+            tag.add_segment_tag(seg_tag) unless tag.has_tag(seg_tag)
+            seg_tag.media_segment = self
+          end
+          return @_lines << tag
+        end
+
         fail 'Only M3Uzi2::Tags or MediaSegments may be added to playlist'
       end
     end

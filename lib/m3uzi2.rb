@@ -48,10 +48,10 @@ end
 require 'stringio'
 if $PROGRAM_NAME == __FILE__
   m3u8 = M3Uzi2::M3Uzi2.new('../spec/samples/valid/2014-08-18-122730.M3U8')
-
-#  m3u8.load
   puts m3u8.valid?
+
   m3u8.write_io_stream(stream = StringIO.new)
   puts stream.string
+
   m3u8.save('../spec/samples/valid/2014-08-18-122730.COPY.M3U8')
 end

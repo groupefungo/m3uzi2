@@ -5,7 +5,7 @@ include M3Uzi2
 
 describe M3Uzi2::Tag do
   let(:spec) { M3Uzi2::HeaderSpecification.new }
-  let(:plspec) { M3Uzi2::PlaylistSpecification.new }
+  let(:plspec) { M3Uzi2::MediaSegmentSpecification.new }
 
   describe 'EXTINF' do
     context 'is invalid' do

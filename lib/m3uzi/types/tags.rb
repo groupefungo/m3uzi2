@@ -1,5 +1,6 @@
 require_relative '../error_handler'
 require_relative 'attributes'
+require_relative 'media_segment'
 
 module M3Uzi2
   class Tags < Hash; end
@@ -14,6 +15,8 @@ module M3Uzi2
                 #:value,
                 :attributes
 
+    attr_reader :media_segment
+
     attr_accessor :specification
 
     # ==== Description
@@ -27,10 +30,18 @@ module M3Uzi2
       @value = value
       @attributes = Attributes.new
       @specification = specification
+
+      @media_segment = nil
     end
 
     def value
       @value
+    end
+
+    def media_segment=(ms)
+      fail "#{@name} is not a valid MediaSegment Tag" \
+        unless MediaSegment.valid_tag?(@name)
+      @media_segment = ms
     end
 
     # Set the Tags value. Note that attempting to set a value on a tag
@@ -69,7 +80,7 @@ module M3Uzi2
     # Convenience method to access attributes via [attibute_name]=val
     # semantics, and allow an existing attributes value to be changed.
     def []=(key, value)
-      fail_if_value_exculudes_attribute
+      fail_if_value_excludes_attribute
       @attributes[key] = value
     end
 
@@ -77,7 +88,7 @@ module M3Uzi2
     # Note that attempting to add an attribute on a tag
     # that has a value will raise StandardError
     def add_attribute(name, value)
-      fail_if_value_exculudes_attribute
+      fail_if_value_excludes_attribute
       @attributes[name] = Attribute.new(self, name, value)
     end
 
@@ -105,7 +116,7 @@ module M3Uzi2
 
     private
 
-    def fail_if_value_exculudes_attribute
+    def fail_if_value_excludes_attribute
       fail "Cannot add attributes to a #{self.class.name} "\
            'that has a value!' if @value
     end

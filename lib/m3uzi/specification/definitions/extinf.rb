@@ -3,8 +3,7 @@ require_relative 'tag_definition'
 module M3Uzi2
   # http://tools.ietf.org/html/draft-pantos-http-live-streaming-14
   # #section-4.3.2.1
-  #
-  #
+
   # The EXTINF tag specifies the duration of a Media Segment. It applies only
   # to the next Media Segment. This tag is REQUIRED for each Media Segment.
   # Its format is:

@@ -19,8 +19,6 @@ Playlist Compatability : <Media, Master, or Both>
 
 2) Required vs Optional
 
-
-
 3) Examples
 Are not 8.6, 8.7, and 8.8 invalid since they do not contain an EXT-X-VERSION tag
 specifying version 4?

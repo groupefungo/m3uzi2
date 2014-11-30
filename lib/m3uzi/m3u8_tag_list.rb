@@ -7,6 +7,13 @@ module M3Uzi2
   class M3U8TagList
     include Enumerable
 
+    def self.create_tag(name, attributes, value)
+      tag = Tag.new(name, value)
+      tag.add_attributes(attributes) unless attributes.nil?
+
+      return tag
+    end
+
     def initialize
       @_lines = []
     end
@@ -23,7 +30,6 @@ module M3Uzi2
       @_lines.delete(tag)
     end
 
-
     def clear!
       @_lines.clear
     end
@@ -34,15 +40,15 @@ module M3Uzi2
     end
 
     def add(tag)
-      return nil unless tag.kind_of? Tag
-
-      if tag.specification.nil?
-        tag.specification = self.class.specification
-      end
-
+      return nil unless tag.kind_of?(Tag)
+      tag.specification = self.class.specification if tag.specification.nil?
       tag.valid?
 
-      return @_lines << tag
+      @_lines << tag
+    end
+
+    def has_tag_name?(name)
+      any? { | tag | tag.name == name }
     end
 
     def index(tag)
@@ -55,13 +61,6 @@ module M3Uzi2
 
     def to_s
       @_lines.to_s
-    end
-
-    def self.create_tag(name, attributes, value)
-      tag = Tag.new(name, value)
-      tag.add_attributes(attributes) unless attributes.nil?
-
-      return tag
     end
 
     protected

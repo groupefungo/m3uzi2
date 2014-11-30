@@ -109,6 +109,12 @@ module M3Uzi2
     rescue
       false
     end
+
+    private
+
+    def _true_float(val)
+      Float(val) && val.to_s.include?('.')
+    end
   end
 
   ###########################################################################
@@ -144,7 +150,7 @@ module M3Uzi2
     def float_value_constraint
       @_ts << TagConstraint.new('Invalid Float Value') do | tag |
         begin
-          true if Float(tag.value) && tag.value.to_s.include?('.')
+          true if _true_float(tag.value) #Float(tag.value) && tag.value.to_s.include?('.')
         rescue
           false
         end

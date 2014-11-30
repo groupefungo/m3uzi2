@@ -165,7 +165,7 @@ module M3Uzi2
       @headers.all? { | h | h.valid? } &&
         @playlist.all? { | p | p.valid? } &&
         version(nil_on_mismatch: true) &&
-        PlaylistCompatability.check(@headers, @playlist)
+          PlaylistCompatability.check(@headers, @playlist)
     end
 
     def dump
@@ -177,6 +177,8 @@ module M3Uzi2
     # Given a path+filename of a media segment, that segment will be deleted
     # AND all applicable tags
     def delete_media_segment(filename)
+
+      # need to check if the media
       @headers.increment_media_sequence if @playlist
         .delete_media_segment(filename)
     end

@@ -1,19 +1,83 @@
 
 module M3Uzi2
+  # A Media Playlist contains a series of Media Segments which make up the
+  # overall presentation. A Media Segment is specified by a URI and optionally
+  # a byte range.
 
-  # A media segment is a special case since it is not defined as a tag -
-  # rather it is a URI and preceeding tags apply to it.
-  #
-  # Each Media Segment is specified by a series of Media Segment tags followed
-  # by a URI.  Some Media Segment tags apply to just the next
-  # segment; others apply to all subsequent segments until another instance of
-  # the same tag.
-  #
-  # A Media Segment tag MUST NOT appear in a Master Playlist.  Clients SHOULD
-  # fail to parse Playlists that contain both Media Segment Tags and Master
-  # Playlist tags (Section 4.3.4).
-  #
-  # Since it is not a tag we don't validate via the specification ...
+  # The duration of each Media Segment is indicated in the Media Playlist by
+  # its EXTINF tag (Section 4.3.2.1).
+
+  # Each segment in a Media Playlist has a unique integer Media Sequence
+  # Number. The Media Sequence Number of the first segment in the playlist is
+  # either 0, or declared in the Playlist (Section 4.3.3.2). The Media Sequence
+  # Number of every other segment is equal to the Media Sequence Number of the
+  # segment that precedes it plus one.
+
+  # Each Media Segment MUST be formatted as an MPEG-2 Transport Stream
+  # [ISO_13818], an MPEG audio elementary stream [ISO_11172], or a WebVTT
+  # [WebVTT] file. Transport of other media file formats is not defined.
+
+  # Some media formats require that a parser be initialized with a common
+  # sequence of bytes before a Media Segment can be parsed. This format-
+  # specific sequence is called the Media Initialization Section. The Media
+  # Initialization Section of an MPEG-2 Transport Stream segment is the Program
+  # Association Table (PAT) followed by the Program Map Table (PMT). The Media
+  # Initialization Section of a WebVTT segment is the WebVTT header. An audio
+  # elementary stream has no Media Initialization Section.
+
+  # Transport Stream segments MUST contain a single MPEG-2 Program; playback of
+  # Multi-Program Transport Streams is not defined. Each Transport Stream
+  # segment SHOULD contain a PAT and a PMT at the start of the segment - or
+  # have a Media Initialization Section declared in the Media Playlist (Section
+  # 4.3.2.5). Transport Stream packets read before a corresponding PAT/PMT can
+  # be discarded.
+
+  # A Media Segment that contains video SHOULD have at least one key frame and
+  # enough information to completely initialize a video decoder.
+
+  # Each Media Segment MUST be the continuation of the encoded media at the end
+  # of the segment with the previous Media Sequence Number, where values in a
+  # continuous series such as timestamps and Continuity Counters continue
+  # uninterrupted. The only exceptions are the first Media Segment ever to
+  # appear in a Media Playlist, and Media Segments which are explicitly
+  # signaled as discontinuities (Section 4.3.2.3). Unmarked media
+  # discontinuities can trigger playback errors.
+
+  # Each Elementary Audio Stream segment MUST signal the timestamp of its first
+  # sample with an ID3 PRIV tag [ID3] at the beginning of the segment. The ID3
+  # PRIV owner identifier MUST be
+  # "com.apple.streaming.transportStreamTimestamp".
+  # The ID3 payload MUST be a
+  # 33-bit MPEG-2 Program Elementary Stream timestamp expressed as a big-endian
+  # eight-octet number, with the upper 31 bits set to zero. An Elementary
+  # Audio Stream segment without such an ID3 tag can trigger playback errors.
+
+  # Subtitle segments are formatted as WebVTT [WebVTT] files. Each subtitle
+  # segment MUST contain all subtitle cues that are intended to be displayed
+  # during the period indicated by the segment EXTINF duration. The start time
+  # offset and end time offset of each cue MUST indicate the total display time
+  # for that cue, even if that time range extends beyond the EXTINF duration.
+  # A WebVTT segment MAY contain no cues; this indicates that no subtitles are
+  # to be displayed during that period.
+
+  # Each subtitle segment MUST either start with a WebVTT header or have a
+  # Media Initialization Section declared in the Media Playlist (Section
+  # 4.3.2.5).
+
+  # Within each WebVTT header there MUST be an X-TIMESTAMP-MAP metadata header.
+  # This header synchronizes the cue timestamps in the WebVTT file with the
+  # MPEG-2 (PES) timestamps in other Renditions of the Variant Stream. Its
+  # format is:
+
+  # X-TIMESTAMP-MAP=LOCAL:<cue time>,MPEGTS:<MPEG-2 time>
+  # e.g. X-TIMESTAMP-MAP=LOCAL:00:00:00.000,MPEGTS:900000
+
+  # The cue timestamp in the LOCAL attribute MAY fall outside the range of time
+  # covered by the segment.
+
+  # A subtitle segment not meeting these requirements can be displayed
+  # inconsistently, not display at all, or cause other playback errors.
+
   class MediaSegment
     attr_accessor :path,
                   :playlist
@@ -61,6 +125,10 @@ module M3Uzi2
       @path && (@segment_tags.empty? ? true : @segment_tags.all? { | s | s.valid? })
     end
 
+    def sequence_number
+
+    end
+
     # pantos_14 branch
     # BIG change to the way m3uzi2 works - a media segment now manages the
     # tags which apply to it. See specification for valid tags.
@@ -104,8 +172,24 @@ module M3Uzi2
       M3Uzi2::M3U8File.create_tag(name, atttibutes, value)
     end
 
-    # Return ALL tags (including those in other media_segments) which will
-    # apply to this media segment
+    # deletes the segment and all applicable tags
+    def delete(playlist = nil, delete_applicable_tags: true)
+      playlist = set_playlist(playlist)
+      return unless (idx = playlist.index(self))
+
+      applicable_tags(playlist).each do | tag |
+        playlist.delete(tag)
+      end if delete_applicable_tags
+
+      playlist.delete(self)
+    end
+
+    def remove
+
+    end
+
+    # Return all tags which directly apply to this media segment.
+    # TODO: add 'all' which also returns applicable key and map tags
     def applicable_tags(playlist = nil)
       playlist = @playlist if playlist.nil?
       fail 'Cannot find applicable_tags playlist is set' unless playlist
@@ -113,10 +197,10 @@ module M3Uzi2
       return [].tap do | tmp |
         if playlist.index(self) > 0
           (playlist.index(self) - 1).downto(0).each do | i |
-            #puts "################# #{i} #{playlist.item_at(i)}"
             break if playlist.item_at(i).kind_of?(MediaSegment)
-            break unless MediaSegment.valid_tag?(playlist.item_at(i).name)
-            tmp << playlist.item_at(i)
+
+            tmp << playlist.item_at(i) \
+              if MediaSegment.valid_tag?(playlist.item_at(i).name)
           end
         end
       end
@@ -132,5 +216,14 @@ module M3Uzi2
         return Float(tmp.value[0..tmp.value.index(',') - 1])
       end
     end
+
+    private
+
+    def set_playlist(playlist)
+      playlist = @playlist if playlist.nil?
+      fail 'Cannot find applicable_tags playlist is set' unless playlist
+      playlist
+    end
+
   end
 end

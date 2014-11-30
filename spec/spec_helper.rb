@@ -23,7 +23,7 @@ def create_sample_data
   end
 
   let(:sample_pl) do
-    pl = M3U8Playlist.new
+    pl = MediaPlaylist.new
     sample_data.each do |line|
       if line.index('ts')
         pl << MediaSegment.new(line, pl)

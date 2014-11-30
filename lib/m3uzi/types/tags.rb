@@ -38,6 +38,7 @@ module M3Uzi2
       @value
     end
 
+    # Ooops. A tag might apply to multiple media segments
     def media_segment=(ms)
       fail "#{@name} is not a valid MediaSegment Tag" \
         unless MediaSegment.valid_tag?(@name)

@@ -7,6 +7,7 @@
 #
 #   1 method to split them all
 module SafeSplit
+
   private
 
   # TODO: Nicer method which doesnt split incorrectly in the first place

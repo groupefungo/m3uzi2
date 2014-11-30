@@ -19,6 +19,11 @@ module M3Uzi2
       add(tag)
     end
 
+    def delete(tag)
+      @_lines.delete(tag)
+    end
+
+
     def clear!
       @_lines.clear
     end

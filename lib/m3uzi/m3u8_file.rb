@@ -27,7 +27,7 @@ module M3Uzi2
     def initialize(pathname = nil)
       @pathname = pathname
       @headers = M3U8Headers.new
-      @playlist = M3U8Playlist.new
+      @playlist = MediaPlaylist.new
       @type = :UNSPECIFIED
     end
 
@@ -44,7 +44,7 @@ module M3Uzi2
         return create_media_segment(value)
       end
 
-      if M3U8Playlist.valid_tag?(tag)
+      if MediaPlaylist.valid_tag?(tag)
         return create_playlist_tag(tag, attributes, value)
       elsif M3U8Headers.valid_header?(tag)
         return create_header_tag(tag, attributes, value)
@@ -66,14 +66,14 @@ module M3Uzi2
     # ==== Description
     # Helper method. Creates a mediasegment which is not added to the file.
     def self.create_media_segment(path)
-      return M3U8Playlist.create_media_segment(path)
+      return MediaPlaylist.create_media_segment(path)
     end
 
     # ==== Description
     # Helper method. Creates a playlist tag which is not added to the file.
     def self.create_playlist_tag(tag, attributes, value)
-      return M3U8Playlist.create_tag(tag, attributes, value).tap do | t |
-        t.specification = M3U8Playlist.specification
+      return MediaPlaylist.create_tag(tag, attributes, value).tap do | t |
+        t.specification = MediaPlaylist.specification
         t.valid?
       end
     end
@@ -232,7 +232,7 @@ module M3Uzi2
     # Return the list depending on the tag type or name
     def get_list(tag)
       return @playlist if tag.kind_of? MediaSegment
-      return @playlist if M3U8Playlist.valid_tag?(tag.name)
+      return @playlist if MediaPlaylist.valid_tag?(tag.name)
       return @headers if M3U8Headers.valid_header?(tag.name)
 
       fail "UNKNOWN Tag :: #{tag} "

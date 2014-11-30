@@ -14,8 +14,11 @@ module M3Uzi2
   class MediaSegmentSpecification < ListSpecification
     def initialize
       self.class.tag_list =
-        %w( EXTINF EXT-X-BYTERANGE EXT-X-KEY EXT-X-PROGRAM-DATE-TIME
-            EXT-X-DISCONTINUITY EXT-X-MAP)
+        %w( EXTINF
+            EXT-X-BYTERANGE
+            EXT-X-PROGRAM-DATE-TIME
+            EXT-X-DISCONTINUITY
+            )
       super
     end
   end

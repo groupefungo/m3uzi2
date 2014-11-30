@@ -133,7 +133,6 @@ describe MediaSegment do
       expect(@m3u8_file.media_segments[1].applicable_tags.count).to eq 1
       expect(@m3u8_file.media_segments[6].applicable_tags.count).to eq 2
       expect(@m3u8_file.media_segments[8].applicable_tags.count).to eq 3
-
     end
 
   end

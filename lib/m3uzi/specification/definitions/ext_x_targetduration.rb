@@ -4,20 +4,19 @@ module M3Uzi2
   # http://tools.ietf.org/html/draft-pantos-http-live-streaming-13
   # #section-3.4.2
   #
-  # The EXT-X-TARGETDURATION tag specifies the maximum media segment
-  # duration.  The EXTINF duration of each media segment in the Playlist
+
+  # The EXT-X-TARGETDURATION tag specifies the maximum Media Segment
+  # duration.  The EXTINF duration of each Media Segment in the Playlist
   # file, when rounded to the nearest integer, MUST be less than or equal
-  # to the target duration.  This tag MUST appear once in a Media
-  # Playlist file.  It applies to the entire Playlist file.  Its format
+  # to the target duration; longer segments can trigger playback stalls
+  # or other errors.  It applies to the entire Playlist file.  Its format
   # is:
-  #
+
   # #EXT-X-TARGETDURATION:<s>
-  #
+
   # where s is a decimal-integer indicating the target duration in
-  # seconds.
-  #
-  # The EXT-X-TARGETDURATION tag MUST NOT appear in a Master Playlist.
-  #
+  # seconds.  The EXT-X-TARGETDURATION tag is REQUIRED.
+
   class EXT_X_TARGETDURATION < ValueTag
     def initialize(tags, tn = 'EXT-X-TARGETDURATION')
       @min_version = 1

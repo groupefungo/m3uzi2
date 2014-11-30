@@ -2,27 +2,27 @@ require_relative 'tag_definition'
 
 module M3Uzi2
   # http://tools.ietf.org/html/draft-pantos-http-live-streaming-13
-  # #section-3.4.11
+  # #section-4.3.2.3
+
+  # The EXT-X-DISCONTINUITY tag indicates a discontinuity between the Media
+  # Segment that follows it and the one that preceded it.
+
+  # Its format is:
   #
-  #  The EXT-X-DISCONTINUITY tag indicates an encoding discontinuity
-  #  between the media segment that follows it and the one that preceded
-  #  it.  The set of characteristics that MAY change is:
+  # #EXT-X-DISCONTINUITY
   #
-  #  o  file format
-  #  o  number and type of tracks
-  #  o  encoding parameters
-  #  o  encoding sequence
-  #  o  timestamp sequence
+  # The EXT-X-DISCONTINUITY tag MUST be present if there is a change in any of
+  # the following characteristics:
   #
-  #  Its format is:
-  #
-  #  #EXT-X-DISCONTINUITY
-  #
-  #  See Section 4, Section 6.2.1, and Section 6.3.3 for more information
-  #  about the EXT-X-DISCONTINUITY tag.
-  #
-  #  The EXT-X-DISCONTINUITY tag MUST NOT appear in a Master Playlist.
-  #
+  # - file format
+  # - number, type and identifiers of tracks
+  # - timestamp sequence
+
+  # The EXT-X-DISCONTINUITY tag SHOULD be present if there is a change in any
+  # of the following characteristics:
+
+  # - encoding parameters
+  # - encoding sequence
   class EXT_X_DISCONTINUITY < IndependentTag
     def initialize(tags, tn = 'EXT-X-DISCONTINUITY')
       @min_version = 1

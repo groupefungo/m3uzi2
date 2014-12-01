@@ -25,7 +25,6 @@ module M3Uzi2
       min_version_constraint(1)
       playlist_compatability_constraint(PlaylistCompatability::BOTH)
       valid_occurance_constraint((0..1))
-
       restricted_value_constraint(%w(YES NO))
     end
   end

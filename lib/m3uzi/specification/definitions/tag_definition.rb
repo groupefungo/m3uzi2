@@ -131,10 +131,16 @@ module M3Uzi2
       end
     end
 
-    def integer_value_constraint
+    def integer_value_constraint(positive_only: true)
       @_ts << TagConstraint.new('Invalid Integer Value') do | tag |
         begin
-          true if Integer(tag.value) && !tag.value.to_s.include?('.')
+          if Integer(tag.value) && !tag.value.to_s.include?('.')
+            if positive_only
+              Integer(tag.value) >= 0 ? true : false
+            else
+              true
+            end
+          end
         rescue
           false
         end

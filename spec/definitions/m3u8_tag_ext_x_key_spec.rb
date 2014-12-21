@@ -4,10 +4,6 @@ require_relative '../../lib/m3uzi/types/tags'
 include M3Uzi2
 
 describe M3Uzi2::Tag do
-
-  # Mocking the specification would simplify things however it would
-  # also fail to go to the core of the code in testing that the tags
-  # conform to the specification.
   let(:plspec) { M3Uzi2::MediaPlaylistSpecification.new }
 
   describe 'EXT-X-KEY' do

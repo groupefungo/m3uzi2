@@ -79,7 +79,7 @@ module M3Uzi2
 
     def attribute_tag?(tag)
       tags = %w( #EXT-X-KEY #EXT-X-MEDIA #EXT-X-STREAM-INF #EXT-X-MAP
-                 #EXT-X-I-FRAME-STREAM-INF #EXT-X-START )
+                 #EXT-X-I-FRAME-STREAM-INF #EXT-X-START #EXT-X-SESSION-DATA )
       return tags.include?(tag)
     end
 

@@ -10,6 +10,9 @@ module M3Uzi2
     end
   end
 
+  # Tags parsed as of version 7 (RFC revision 13)
+  # EXT-X-SESSION-DATA
+
   # Tags parsed as of version 6 (RFC revision 13)
   # http://tools.ietf.org/html/draft-pantos-http-live-streaming-13
   #

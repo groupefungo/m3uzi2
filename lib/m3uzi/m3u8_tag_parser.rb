@@ -74,6 +74,26 @@ module M3Uzi2
       ParsedTag.new(*value)
     end
 
+    def independent_tag?(tag)
+      return INDEPENDENT_TAGS.include?(tag)
+    end
+
+    def value_tag?(tag)
+      return VALUE_TAGS.include?(tag)
+    end
+
+    def attribute_tag?(tag)
+      return ATTRIBUTE_TAGS.include?(tag)
+    end
+
+    # TODO
+    # Test if a line is valid which means no whitespace seperating tags
+    def valid?(line)
+      true
+    end
+
+    private
+
     # on return only attributes OR value should be set, never both
     def parse_line(line)
       # it isn't a tag if it doesnt begin with #
@@ -94,22 +114,5 @@ module M3Uzi2
       nil
     end
 
-    def independent_tag?(tag)
-      return INDEPENDENT_TAGS.include?(tag)
-    end
-
-    def value_tag?(tag)
-      return VALUE_TAGS.include?(tag)
-    end
-
-    def attribute_tag?(tag)
-      return ATTRIBUTE_TAGS.include?(tag)
-    end
-
-    # TODO
-    # Test if a line is valid which means no whitespace seperating tags
-    def valid?(line)
-      true
-    end
   end
 end
